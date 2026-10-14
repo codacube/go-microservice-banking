@@ -21,9 +21,8 @@ type CustomerHandlers struct {
 	service service.CustomerService
 }
 
-// User/Driving/Primary Side - Service
-// getAllCustomers handles the HTTP request by calling the CustomerService
-// primary port, then encodes the result as JSON or XML for the client.
+// HTTP handler function for the /customers endpoint. It uses the CustomerService
+// primary port to retrieve customer data and respond to the client.
 func (ch *CustomerHandlers) getAllCustomers(w http.ResponseWriter, r *http.Request) {
 	// customers := []Customer{
 	// 	{Name: "John", City: "Auckland", Postcode: "10001"},
