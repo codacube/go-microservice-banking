@@ -2,12 +2,15 @@ package service
 
 import "github.com/codacube/go-microservice-banking/domain"
 
-// Port (Primary) - Service
-type CustomerService struct {
-	GetAllCustomers func() ([]domain.Customer, error)
+// CustomerService is the primary port that exposes customer use cases to
+// inbound adapters, such as HTTP handlers.
+type CustomerService interface {
+	GetAllCustomers() ([]domain.Customer, error)
 }
 
-// Business Logic (accessing the secondary port - CustomerRepository)
+// DefaultCustomerService implements the primary port and contains the
+// application logic. It uses the CustomerRepository secondary port to access
+// customer data without depending on a specific storage implementation.
 type DefaultCustomerService struct {
 	repo domain.CustomerRepository
 }
