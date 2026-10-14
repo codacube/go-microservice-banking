@@ -8,7 +8,7 @@ type CustomerService interface {
 	GetAllCustomers() ([]domain.Customer, error)
 }
 
-// DefaultCustomerService implements the primary port and contains the
+// DefaultCustomerService (Business Logic) implements the primary port and contains the
 // application logic. It uses the CustomerRepository secondary port to access
 // customer data without depending on a specific storage implementation.
 type DefaultCustomerService struct {
