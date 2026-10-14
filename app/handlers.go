@@ -3,8 +3,9 @@ package app
 import (
 	"encoding/json"
 	"encoding/xml"
-	"fmt"
 	"net/http"
+
+	"github.com/codacube/go-microservice-banking/service"
 )
 
 type Customer struct {
@@ -13,15 +14,27 @@ type Customer struct {
 	Postcode string `json:"post_code" xml:"post_code"`
 }
 
-func greet(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello World!!")
+// User/Driving/Primary Side - Adapter
+// CustomerHandlers is the inbound HTTP adapter for customer use cases. It
+// depends on the primary CustomerService port, not on data-storage details.
+type CustomerHandlers struct {
+	service service.CustomerService
 }
 
-func getAllCustomers(w http.ResponseWriter, r *http.Request) {
-	customers := []Customer{
-		{Name: "John", City: "Auckland", Postcode: "10001"},
-		{Name: "Jane", City: "Wellington", Postcode: "90001"},
-		{Name: "Bob", City: "Christchurch", Postcode: "60601"},
+// User/Driving/Primary Side - Service
+// getAllCustomers handles the HTTP request by calling the CustomerService
+// primary port, then encodes the result as JSON or XML for the client.
+func (ch *CustomerHandlers) getAllCustomers(w http.ResponseWriter, r *http.Request) {
+	// customers := []Customer{
+	// 	{Name: "John", City: "Auckland", Postcode: "10001"},
+	// 	{Name: "Jane", City: "Wellington", Postcode: "90001"},
+	// 	{Name: "Bob", City: "Christchurch", Postcode: "60601"},
+	// }
+
+	customers, err := ch.service.GetAllCustomers()
+	if err != nil {
+		http.Error(w, "Failed to retrieve customers", http.StatusInternalServerError)
+		return
 	}
 
 	if r.Header.Get("Content-Type") == "application/xml" {
