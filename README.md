@@ -4,6 +4,7 @@ Simple microservice project that showcases:
 
 - Routing
 - [Gorilla/mux](https://github.com/gorilla/mux)
+- [Hexagonal Architecture](<https://en.wikipedia.org/wiki/Hexagonal_architecture_(software)>)
 
 ## For testing
 
