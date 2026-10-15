@@ -22,7 +22,7 @@ curl -i -H "Content-Type: application/json" http://localhost:8000/customers
 
 Acceptance Criteria
 
-- The URL should only accept numeric IDs
-- API should return customer as a JSON object
-- In case the customer ID does not exist, the API should return http status code 404 (Not Found)
-- In case of an unexpected error, the API should return a status code 500 (Internal Server Error) along with the error message
+- [x] The URL should only accept numeric IDs
+- [x] API should return customer as a JSON object
+- [x] In case the customer ID does not exist, the API should return http status code 404 (Not Found)
+- [x] In case of an unexpected error, the API should return a status code 500 (Internal Server Error) along with the error message

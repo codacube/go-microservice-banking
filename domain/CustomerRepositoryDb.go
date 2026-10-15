@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/codacube/go-microservice-banking/errs"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -37,7 +38,7 @@ func (c CustomerRepositoryDb) FindAll() ([]Customer, error) {
 	return customers, nil
 }
 
-func (c CustomerRepositoryDb) ByID(id string) (*Customer, error) {
+func (c CustomerRepositoryDb) ByID(id string) (*Customer, *errs.AppError) {
 	findByIDSQL := "select customer_id, name, city, zipcode, date_of_birth, status from customers where customer_id = ?"
 
 	row := c.client.QueryRow(findByIDSQL, id)
@@ -45,8 +46,11 @@ func (c CustomerRepositoryDb) ByID(id string) (*Customer, error) {
 	var customer Customer
 	err := row.Scan(&customer.Id, &customer.Name, &customer.City, &customer.Postcode, &customer.DateOfBirth, &customer.Status)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errs.NewNotFoundError("Customer not found")
+		}
 		log.Println("Error while scanning customer " + err.Error())
-		return nil, err
+		return nil, errs.NewUnexpectedError("Unexpected database error")
 	}
 
 	return &customer, nil

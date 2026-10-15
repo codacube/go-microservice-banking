@@ -1,5 +1,7 @@
 package domain
 
+import "github.com/codacube/go-microservice-banking/errs"
+
 // Business Side Layer - Domain Layer
 
 type Customer struct {
@@ -14,5 +16,5 @@ type Customer struct {
 // Ports (Secondary)
 type CustomerRepository interface {
 	FindAll() ([]Customer, error)
-	ByID(id string) (*Customer, error)
+	ByID(id string) (*Customer, *errs.AppError)
 }
