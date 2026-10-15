@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/codacube/go-microservice-banking/errs"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -13,9 +14,9 @@ type CustomerRepositoryDb struct {
 }
 
 func (c CustomerRepositoryDb) FindAll() ([]Customer, error) {
-	findAllSql := "select customer_id, name, city, zipcode, date_of_birth, status from customers"
+	findAllSQL := "select customer_id, name, city, zipcode, date_of_birth, status from customers"
 
-	rows, err := c.client.Query(findAllSql)
+	rows, err := c.client.Query(findAllSQL)
 	if err != nil {
 		log.Println("Error while querying customers table " + err.Error())
 		return nil, err
@@ -35,6 +36,24 @@ func (c CustomerRepositoryDb) FindAll() ([]Customer, error) {
 		customers = append(customers, customer)
 	}
 	return customers, nil
+}
+
+func (c CustomerRepositoryDb) ByID(id string) (*Customer, *errs.AppError) {
+	findByIDSQL := "select customer_id, name, city, zipcode, date_of_birth, status from customers where customer_id = ?"
+
+	row := c.client.QueryRow(findByIDSQL, id)
+
+	var customer Customer
+	err := row.Scan(&customer.Id, &customer.Name, &customer.City, &customer.Postcode, &customer.DateOfBirth, &customer.Status)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errs.NewNotFoundError("Customer not found")
+		}
+		log.Println("Error while scanning customer " + err.Error())
+		return nil, errs.NewUnexpectedError("Unexpected database error")
+	}
+
+	return &customer, nil
 }
 
 func NewCustomerRepositoryDb() CustomerRepositoryDb {
