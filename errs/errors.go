@@ -3,8 +3,14 @@ package errs
 import "net/http"
 
 type AppError struct {
-	Code    int    `json:"code"`
+	Code    int    `json:",omitempty"` // Exclude it from the response body if it's empty
 	Message string `json:"message"`
+}
+
+func (e *AppError) AsMessage() *AppError {
+	return &AppError{
+		Message: e.Message,
+	}
 }
 
 func NewNotFoundError(message string) *AppError {
