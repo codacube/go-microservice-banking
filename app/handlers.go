@@ -3,9 +3,11 @@ package app
 import (
 	"encoding/json"
 	"encoding/xml"
+	"fmt"
 	"net/http"
 
 	"github.com/codacube/go-microservice-banking/service"
+	"github.com/gorilla/mux"
 )
 
 type Customer struct {
@@ -42,5 +44,21 @@ func (ch *CustomerHandlers) getAllCustomers(w http.ResponseWriter, r *http.Reque
 	} else {
 		w.Header().Add("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(customers)
+	}
+}
+
+func (ch *CustomerHandlers) getCustomer(w http.ResponseWriter, r *http.Request) {
+	// Extract the customer ID from the URL path
+	vars := mux.Vars(r)
+	customerID := vars["customer_id"]
+
+	// Pass the ID to the service layer to retrieve the customer
+	customer, err := ch.service.GetCustomer(customerID)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(w, err.Error())
+	} else {
+		w.Header().Add("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(customer)
 	}
 }
