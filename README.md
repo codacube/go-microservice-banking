@@ -1,4 +1,4 @@
-# Sample Microservices Go project
+# Sample Microservices Go Project
 
 Simple microservice project that showcases:
 
