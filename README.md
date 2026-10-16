@@ -28,6 +28,10 @@ Acceptance Criteria
 - [x] API should only return a JSON response
 - [x] In case of an unexpected error, the API should return a status code 500 (Internal Server Error) along with the error message (as JSON object)
 - [x] API should return HTTP status code 200 and the data upon successfully retrieving all customers from the server side
+- [ ] The API should provide an option to fetch the customers by status, eg:
+  - [x] /customers?status=active - return all active customers
+  - [x] /customers?status=inactive - return all inactive customers
+  - [x] should return all customers
 
 ### Retrieving a Customer by ID
 
