@@ -1,12 +1,14 @@
 package domain
 
+import "github.com/codacube/go-microservice-banking/errs"
+
 // Adapters
 type CustomerRepositoryStub struct {
 	customers []Customer
 }
 
 // Go supports Duck Typing, so we don't need to explicitly declare that CustomerRepositoryStub implements CustomerRepository interface. If it has the same methods, it is considered to implement the interface.
-func (c *CustomerRepositoryStub) FindAll() ([]Customer, error) {
+func (c *CustomerRepositoryStub) FindAll() ([]Customer, *errs.AppError) {
 	return c.customers, nil
 }
 

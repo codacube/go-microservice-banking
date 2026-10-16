@@ -8,7 +8,7 @@ import (
 // CustomerService is the primary port that exposes customer use cases to
 // inbound adapters, such as HTTP handlers.
 type CustomerService interface {
-	GetAllCustomers() ([]domain.Customer, error)
+	GetAllCustomers(status string) ([]domain.Customer, *errs.AppError)
 	GetCustomer(id string) (*domain.Customer, *errs.AppError)
 }
 
@@ -21,8 +21,16 @@ type DefaultCustomerService struct {
 
 // Receiver function for DefaultCustomerService to implement the CustomerService interface
 // (connects the primary port to the secondary port)
-func (s DefaultCustomerService) GetAllCustomers() ([]domain.Customer, error) {
-	return s.repo.FindAll()
+func (s DefaultCustomerService) GetAllCustomers(status string) ([]domain.Customer, *errs.AppError) {
+	// NOTE: See my note in the adapter on why I don't think this is a good idea
+	if status == "active" {
+		status = "1"
+	} else if status == "inactive" {
+		status = "0"
+	} else {
+		status = ""
+	}
+	return s.repo.FindAll(status)
 }
 
 func (s DefaultCustomerService) GetCustomer(id string) (*domain.Customer, *errs.AppError) {

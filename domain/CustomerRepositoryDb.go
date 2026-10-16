@@ -9,31 +9,57 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+// Server Side
+
 type CustomerRepositoryDb struct {
 	client *sql.DB
 }
 
-func (c CustomerRepositoryDb) FindAll() ([]Customer, error) {
-	findAllSQL := "select customer_id, name, city, zipcode, date_of_birth, status from customers"
+func (c CustomerRepositoryDb) FindAll(status string) ([]Customer, *errs.AppError) {
+	var rows *sql.Rows
+	var err error
 
-	rows, err := c.client.Query(findAllSQL)
+	/* Translating status is currently done in the service. However
+	   if the adapter is something other than MySQL, then the expected
+	   values might not work (because status in the DB could be
+	   true/false, etc). The service doesn't know about adapter requirements,
+	   and the adapter doesn't know about business requirements, etc.
+
+	   Personally I would have a translation, or do this in the domain:
+
+		if status == "active" {
+			dbStatus = 1
+		} elseif status == "inactive" {
+			dbStatus = 0
+		}
+	*/
+
+	if status == "" {
+		findAllSQL := "select customer_id, name, city, zipcode, date_of_birth, status from customers"
+		rows, err = c.client.Query(findAllSQL)
+	} else {
+		findAllSQL := "select customer_id, name, city, zipcode, date_of_birth, status from customers where status = ?"
+		rows, err = c.client.Query(findAllSQL, status)
+	}
+
 	if err != nil {
-		log.Println("Error while querying customers table " + err.Error())
-		return nil, err
-		// panic(err)
+		log.Println("Error whilst querying customers table " + err.Error())
+		return nil, errs.NewUnexpectedError("Unexpected database error")
 	}
 	defer rows.Close()
 
 	var customers []Customer
 	for rows.Next() {
 		var customer Customer
-		err := rows.Scan(&customer.Id, &customer.Name, &customer.City, &customer.Postcode, &customer.DateOfBirth, &customer.Status)
-		if err != nil {
-			log.Println("Error while scanning customers " + err.Error())
-			return nil, err
-			// panic(err)
+		if err := rows.Scan(&customer.Id, &customer.Name, &customer.City, &customer.Postcode, &customer.DateOfBirth, &customer.Status); err != nil {
+			log.Println("Error while getting all customers " + err.Error())
+			return nil, errs.NewUnexpectedError("Error while scanning customers " + err.Error())
 		}
 		customers = append(customers, customer)
+	}
+	if err := rows.Err(); err != nil {
+		log.Println("Error while getting all customers " + err.Error())
+		return nil, errs.NewUnexpectedError("Unexpected database error")
 	}
 	return customers, nil
 }

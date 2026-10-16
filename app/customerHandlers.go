@@ -2,7 +2,6 @@ package app
 
 import (
 	"encoding/json"
-	"encoding/xml"
 	"net/http"
 
 	"github.com/codacube/go-microservice-banking/service"
@@ -19,18 +18,13 @@ type CustomerHandlers struct {
 // HTTP handler function for the /customers endpoint. It uses the CustomerService
 // primary port to retrieve customer data and respond to the client.
 func (ch *CustomerHandlers) getAllCustomers(w http.ResponseWriter, r *http.Request) {
-	customers, err := ch.service.GetAllCustomers()
-	if err != nil {
-		http.Error(w, "Failed to retrieve customers", http.StatusInternalServerError)
-		return
-	}
+	status := r.URL.Query().Get("status")
 
-	if r.Header.Get("Content-Type") == "application/xml" {
-		w.Header().Add("Content-Type", "application/xml")
-		xml.NewEncoder(w).Encode(customers)
+	customers, err := ch.service.GetAllCustomers(status)
+	if err != nil {
+		writeResponse(w, err.Code, err.AsMessage())
 	} else {
-		w.Header().Add("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(customers)
+		writeResponse(w, http.StatusOK, customers)
 	}
 }
 
