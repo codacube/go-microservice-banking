@@ -8,7 +8,7 @@ import (
 // CustomerService is the primary port that exposes customer use cases to
 // inbound adapters, such as HTTP handlers.
 type CustomerService interface {
-	GetAllCustomers() ([]domain.Customer, error)
+	GetAllCustomers() ([]domain.Customer, *errs.AppError)
 	GetCustomer(id string) (*domain.Customer, *errs.AppError)
 }
 
@@ -21,7 +21,7 @@ type DefaultCustomerService struct {
 
 // Receiver function for DefaultCustomerService to implement the CustomerService interface
 // (connects the primary port to the secondary port)
-func (s DefaultCustomerService) GetAllCustomers() ([]domain.Customer, error) {
+func (s DefaultCustomerService) GetAllCustomers() ([]domain.Customer, *errs.AppError) {
 	return s.repo.FindAll()
 }
 

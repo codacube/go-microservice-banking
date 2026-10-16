@@ -9,31 +9,34 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+// Server Side
+
 type CustomerRepositoryDb struct {
 	client *sql.DB
 }
 
-func (c CustomerRepositoryDb) FindAll() ([]Customer, error) {
+func (c CustomerRepositoryDb) FindAll() ([]Customer, *errs.AppError) {
 	findAllSQL := "select customer_id, name, city, zipcode, date_of_birth, status from customers"
 
 	rows, err := c.client.Query(findAllSQL)
 	if err != nil {
-		log.Println("Error while querying customers table " + err.Error())
-		return nil, err
-		// panic(err)
+		log.Println("Error whilst querying customers table " + err.Error())
+		return nil, errs.NewUnexpectedError("Unexpected database error")
 	}
 	defer rows.Close()
 
 	var customers []Customer
 	for rows.Next() {
 		var customer Customer
-		err := rows.Scan(&customer.Id, &customer.Name, &customer.City, &customer.Postcode, &customer.DateOfBirth, &customer.Status)
-		if err != nil {
-			log.Println("Error while scanning customers " + err.Error())
-			return nil, err
-			// panic(err)
+		if err := rows.Scan(&customer.Id, &customer.Name, &customer.City, &customer.Postcode, &customer.DateOfBirth, &customer.Status); err != nil {
+			log.Println("Error while getting all customers " + err.Error())
+			return nil, errs.NewUnexpectedError("Error while scanning customers " + err.Error())
 		}
 		customers = append(customers, customer)
+	}
+	if err := rows.Err(); err != nil {
+		log.Println("Error while getting all customers " + err.Error())
+		return nil, errs.NewUnexpectedError("Unexpected database error")
 	}
 	return customers, nil
 }
