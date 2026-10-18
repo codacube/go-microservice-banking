@@ -7,6 +7,7 @@ import (
 	"github.com/codacube/go-microservice-banking/errs"
 	"github.com/codacube/go-microservice-banking/logger"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jmoiron/sqlx"
 )
 
 // Server Side
@@ -49,18 +50,12 @@ func (c CustomerRepositoryDb) FindAll(status string) ([]Customer, *errs.AppError
 	defer rows.Close()
 
 	var customers []Customer
-	for rows.Next() {
-		var customer Customer
-		if err := rows.Scan(&customer.Id, &customer.Name, &customer.City, &customer.Postcode, &customer.DateOfBirth, &customer.Status); err != nil {
-			logger.Error("Error while getting all customers " + err.Error())
-			return nil, errs.NewUnexpectedError("Error while scanning customers " + err.Error())
-		}
-		customers = append(customers, customer)
-	}
-	if err := rows.Err(); err != nil {
+	err = sqlx.StructScan(rows, &customers)
+	if err != nil {
 		logger.Error("Error while getting all customers " + err.Error())
-		return nil, errs.NewUnexpectedError("Unexpected database error")
+		return nil, errs.NewUnexpectedError("Error while scanning customers " + err.Error())
 	}
+
 	return customers, nil
 }
 

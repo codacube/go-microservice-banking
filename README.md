@@ -7,6 +7,7 @@ Simple microservice project that showcases:
 - [Hexagonal Architecture](<https://en.wikipedia.org/wiki/Hexagonal_architecture_(software)>)
 - Connecting to a [MySQL](https://github.com/go-sql-driver/mysql) database
 - Structured logging user [Uber Zap](https://github.com/uber-go/zap)
+- [SQLX](https://github.com/jmoiron/sqlx)
 
 ## For testing
 

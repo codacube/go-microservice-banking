@@ -5,11 +5,11 @@ import "github.com/codacube/go-microservice-banking/errs"
 // Business Side Layer - Domain Layer
 
 type Customer struct {
-	Id          string
+	Id          string `db:"customer_id"`
 	Name        string
 	City        string
-	Postcode    string
-	DateOfBirth string
+	Postcode    string `db:"zipcode"`
+	DateOfBirth string `db:"date_of_birth"`
 	Status      string
 }
 
