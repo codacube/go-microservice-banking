@@ -11,5 +11,6 @@ require (
 
 require (
 	filippo.io/edwards25519 v1.2.0 // indirect
+	github.com/jmoiron/sqlx v1.4.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 )
