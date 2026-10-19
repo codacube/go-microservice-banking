@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/codacube/go-microservice-banking/domain"
+	"github.com/codacube/go-microservice-banking/dto"
 	"github.com/codacube/go-microservice-banking/errs"
 )
 
@@ -9,7 +10,7 @@ import (
 // inbound adapters, such as HTTP handlers.
 type CustomerService interface {
 	GetAllCustomers(status string) ([]domain.Customer, *errs.AppError)
-	GetCustomer(id string) (*domain.Customer, *errs.AppError)
+	GetCustomer(id string) (*dto.CustomerResponse, *errs.AppError)
 }
 
 // DefaultCustomerService (Business Logic) implements the primary port and contains the
@@ -33,8 +34,15 @@ func (s DefaultCustomerService) GetAllCustomers(status string) ([]domain.Custome
 	return s.repo.FindAll(status)
 }
 
-func (s DefaultCustomerService) GetCustomer(id string) (*domain.Customer, *errs.AppError) {
-	return s.repo.ByID(id)
+func (s DefaultCustomerService) GetCustomer(id string) (*dto.CustomerResponse, *errs.AppError) {
+	c, err := s.repo.ByID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	response := c.ToDTO()
+
+	return &response, nil
 }
 
 // Helper function to create a new instance of DefaultCustomerService with the provided repository
