@@ -13,12 +13,12 @@ import (
 // Server Side
 
 type CustomerRepositoryDb struct {
-	client *sql.DB
+	client *sqlx.DB
 }
 
-func (c CustomerRepositoryDb) FindAll(status string) ([]Customer, *errs.AppError) {
-	var rows *sql.Rows
+func (db CustomerRepositoryDb) FindAll(status string) ([]Customer, *errs.AppError) {
 	var err error
+	customers := make([]Customer, 0)
 
 	/* Translating status is currently done in the service. However
 	   if the adapter is something other than MySQL, then the expected
@@ -37,35 +37,25 @@ func (c CustomerRepositoryDb) FindAll(status string) ([]Customer, *errs.AppError
 
 	if status == "" {
 		findAllSQL := "select customer_id, name, city, zipcode, date_of_birth, status from customers"
-		rows, err = c.client.Query(findAllSQL)
+		err = db.client.Select(&customers, findAllSQL)
 	} else {
 		findAllSQL := "select customer_id, name, city, zipcode, date_of_birth, status from customers where status = ?"
-		rows, err = c.client.Query(findAllSQL, status)
+		err = db.client.Select(&customers, findAllSQL, status)
 	}
 
 	if err != nil {
 		logger.Error("Error whilst querying customers table " + err.Error())
 		return nil, errs.NewUnexpectedError("Unexpected database error")
 	}
-	defer rows.Close()
-
-	var customers []Customer
-	err = sqlx.StructScan(rows, &customers)
-	if err != nil {
-		logger.Error("Error while getting all customers " + err.Error())
-		return nil, errs.NewUnexpectedError("Error while scanning customers " + err.Error())
-	}
 
 	return customers, nil
 }
 
-func (c CustomerRepositoryDb) ByID(id string) (*Customer, *errs.AppError) {
+func (db CustomerRepositoryDb) ByID(id string) (*Customer, *errs.AppError) {
 	findByIDSQL := "select customer_id, name, city, zipcode, date_of_birth, status from customers where customer_id = ?"
 
-	row := c.client.QueryRow(findByIDSQL, id)
-
 	var customer Customer
-	err := row.Scan(&customer.Id, &customer.Name, &customer.City, &customer.Postcode, &customer.DateOfBirth, &customer.Status)
+	err := db.client.Get(&customer, findByIDSQL, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			logger.Error("Customer not found")
@@ -81,7 +71,7 @@ func (c CustomerRepositoryDb) ByID(id string) (*Customer, *errs.AppError) {
 func NewCustomerRepositoryDb() CustomerRepositoryDb {
 	// The appended flags might be needed to for localhost development, but appears to work without it
 	// sql.Open("mysql", "root:your_strong_password@tcp(localhost:3306)/banking?allowPublicKeyRetrieval=true&parseTime=true")
-	client, err := sql.Open("mysql", "root:your_strong_password@tcp(localhost:3306)/banking")
+	client, err := sqlx.Open("mysql", "root:your_strong_password@tcp(localhost:3306)/banking")
 	if err != nil {
 		panic(err)
 	}
