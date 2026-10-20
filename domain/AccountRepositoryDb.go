@@ -30,3 +30,7 @@ func (db AccountRepositoryDb) Save(a Account) (*Account, *errs.AppError) {
 	a.AccountId = strconv.FormatInt(id, 10)
 	return &a, nil
 }
+
+func NewAccountRepositoryDb(dbClient *sqlx.DB) AccountRepositoryDb {
+	return AccountRepositoryDb{dbClient}
+}
