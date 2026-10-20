@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/codacube/go-microservice-banking/domain"
+	"github.com/codacube/go-microservice-banking/errs"
 	"github.com/codacube/go-microservice-banking/service"
 	"github.com/gorilla/mux"
 )
@@ -18,7 +20,17 @@ type CustomerHandlers struct {
 // HTTP handler function for the /customers endpoint. It uses the CustomerService
 // primary port to retrieve customer data and respond to the client.
 func (ch *CustomerHandlers) getAllCustomers(w http.ResponseWriter, r *http.Request) {
-	status := r.URL.Query().Get("status")
+	var status domain.CustomerStatus
+	switch r.URL.Query().Get("status") {
+	case "":
+	case string(domain.CustomerStatusActive):
+		status = domain.CustomerStatusActive
+	case string(domain.CustomerStatusInactive):
+		status = domain.CustomerStatusInactive
+	default:
+		writeResponse(w, http.StatusBadRequest, errs.NewBadRequestError("Status must be active or inactive").AsMessage())
+		return
+	}
 
 	customers, err := ch.service.GetAllCustomers(status)
 	if err != nil {

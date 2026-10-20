@@ -2,14 +2,15 @@ package service
 
 import (
 	"github.com/codacube/go-microservice-banking/domain"
+	"github.com/codacube/go-microservice-banking/dto"
 	"github.com/codacube/go-microservice-banking/errs"
 )
 
 // CustomerService is the primary port that exposes customer use cases to
 // inbound adapters, such as HTTP handlers.
 type CustomerService interface {
-	GetAllCustomers(status string) ([]domain.Customer, *errs.AppError)
-	GetCustomer(id string) (*domain.Customer, *errs.AppError)
+	GetAllCustomers(status domain.CustomerStatus) ([]dto.CustomerResponse, *errs.AppError)
+	GetCustomer(id string) (*dto.CustomerResponse, *errs.AppError)
 }
 
 // DefaultCustomerService (Business Logic) implements the primary port and contains the
@@ -21,20 +22,27 @@ type DefaultCustomerService struct {
 
 // Receiver function for DefaultCustomerService to implement the CustomerService interface
 // (connects the primary port to the secondary port)
-func (s DefaultCustomerService) GetAllCustomers(status string) ([]domain.Customer, *errs.AppError) {
-	// NOTE: See my note in the adapter on why I don't think this is a good idea
-	if status == "active" {
-		status = "1"
-	} else if status == "inactive" {
-		status = "0"
-	} else {
-		status = ""
+func (s DefaultCustomerService) GetAllCustomers(status domain.CustomerStatus) ([]dto.CustomerResponse, *errs.AppError) {
+	customers, err := s.repo.FindAll(status)
+	if err != nil {
+		return nil, err
 	}
-	return s.repo.FindAll(status)
+	response := make([]dto.CustomerResponse, 0)
+	for _, c := range customers {
+		response = append(response, c.ToDTO())
+	}
+	return response, err
 }
 
-func (s DefaultCustomerService) GetCustomer(id string) (*domain.Customer, *errs.AppError) {
-	return s.repo.ByID(id)
+func (s DefaultCustomerService) GetCustomer(id string) (*dto.CustomerResponse, *errs.AppError) {
+	c, err := s.repo.ByID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	response := c.ToDTO()
+
+	return &response, nil
 }
 
 // Helper function to create a new instance of DefaultCustomerService with the provided repository

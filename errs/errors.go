@@ -20,6 +20,13 @@ func NewNotFoundError(message string) *AppError {
 	}
 }
 
+func NewBadRequestError(message string) *AppError {
+	return &AppError{
+		Code:    http.StatusBadRequest,
+		Message: message,
+	}
+}
+
 func NewUnexpectedError(message string) *AppError {
 	return &AppError{
 		Code:    http.StatusInternalServerError,
