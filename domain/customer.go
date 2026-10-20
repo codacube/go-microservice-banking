@@ -8,22 +8,20 @@ import (
 // Business Side Layer - Domain Layer
 
 type Customer struct {
-	Id          string `db:"customer_id"`
-	Name        string `db:"full_name"`
-	City        string `db:"city"`
-	Postcode    string `db:"zipcode"`
-	DateOfBirth string `db:"date_of_birth"`
-	Status      string `db:"status"`
+	Id          string
+	Name        string
+	City        string
+	Postcode    string
+	DateOfBirth string
+	Status      CustomerStatus
 }
 
-func (c Customer) statusAsText() string {
-	statusAsText := "active"
-	if c.Status == "0" {
-		statusAsText = "inactive"
-	}
+type CustomerStatus string
 
-	return statusAsText
-}
+const (
+	CustomerStatusActive   CustomerStatus = "active"
+	CustomerStatusInactive CustomerStatus = "inactive"
+)
 
 func (c Customer) ToDTO() dto.CustomerResponse {
 	response := dto.CustomerResponse{
@@ -32,7 +30,7 @@ func (c Customer) ToDTO() dto.CustomerResponse {
 		City:        c.City,
 		Postcode:    c.Postcode,
 		DateOfBirth: c.DateOfBirth,
-		Status:      c.statusAsText(),
+		Status:      string(c.Status),
 	}
 
 	return response
@@ -40,6 +38,6 @@ func (c Customer) ToDTO() dto.CustomerResponse {
 
 // Ports (Secondary)
 type CustomerRepository interface {
-	FindAll(status string) ([]Customer, *errs.AppError)
+	FindAll(status CustomerStatus) ([]Customer, *errs.AppError)
 	ByID(id string) (*Customer, *errs.AppError)
 }
