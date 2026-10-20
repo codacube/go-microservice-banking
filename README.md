@@ -9,6 +9,7 @@ Simple microservice project that showcases:
 - Structured logging user [Uber Zap](https://github.com/uber-go/zap)
 - [SQLX](https://github.com/jmoiron/sqlx)
 - Data Transfer Objects
+- Environment variables
 
 ## For testing
 

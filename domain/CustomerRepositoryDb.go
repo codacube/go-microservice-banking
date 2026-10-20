@@ -2,6 +2,8 @@ package domain
 
 import (
 	"database/sql"
+	"fmt"
+	"os"
 	"time"
 
 	"github.com/codacube/go-microservice-banking/errs"
@@ -116,9 +118,17 @@ func (db CustomerRepositoryDb) ByID(id string) (*Customer, *errs.AppError) {
 }
 
 func NewCustomerRepositoryDb() CustomerRepositoryDb {
+	dbUser := os.Getenv("DB_USER")
+	dbPasswd := os.Getenv("DB_PASS")
+	dbAddr := os.Getenv("DB_ADDR")
+	dbPort := os.Getenv("DB_PORT")
+	dbName := os.Getenv("DB_NAME")
+
 	// The appended flags might be needed to for localhost development, but appears to work without it
 	// sql.Open("mysql", "root:your_strong_password@tcp(localhost:3306)/banking?allowPublicKeyRetrieval=true&parseTime=true&columnsWithAlias=true")
-	client, err := sqlx.Open("mysql", "root:your_strong_password@tcp(localhost:3306)/banking")
+	dataSource := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUser, dbPasswd, dbAddr, dbPort, dbName)
+	// dataSource := fmt.Sprintf("%s:%s@tcp(localhost:3306)/banking", dbUser, dbPasswd)
+	client, err := sqlx.Open("mysql", dataSource)
 	if err != nil {
 		panic(err)
 	}
