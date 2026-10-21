@@ -54,7 +54,7 @@ Acceptance Criteria
 
 Acceptance Criteria
 
-- [ ] A new account can only be opened with a minimum deposit of 5000.00
-- [ ] Accounts can only be savings or cheque
-- [ ] In case of an unexpected error, the API should return a status code 500 (Internal Server Error) along with the error message
-- [ ] The API should return the new account ID, when the new account is opened wiht the status code as 201 (CREATED)
+- [x] A new account can only be opened with a minimum deposit of 5000.00
+- [x] Accounts can only be savings or cheque
+- [x] In case of an unexpected error, the API should return a status code 500 (Internal Server Error) along with the error message
+- [x] The API should return the new account ID, when the new account is opened with the status code as 201 (CREATED)
