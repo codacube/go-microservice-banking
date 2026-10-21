@@ -15,7 +15,7 @@ type Account struct {
 }
 
 func (a Account) ToNewAccountResponseDTO() dto.NewAccountResponse {
-	return dto.NewAccountResponse{a.AccountID}
+	return dto.NewAccountResponse{AccountID: a.AccountID}
 }
 
 type AccountRepository interface {
