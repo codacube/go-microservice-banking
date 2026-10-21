@@ -3,6 +3,7 @@
 Simple microservice project that showcases:
 
 - Routing
+- GET/POST
 - [Gorilla/mux](https://github.com/gorilla/mux)
 - [Hexagonal Architecture](<https://en.wikipedia.org/wiki/Hexagonal_architecture_(software)>)
 - Connecting to a [MySQL](https://github.com/go-sql-driver/mysql) database
@@ -48,3 +49,12 @@ Acceptance Criteria
 - [x] In case the customer ID does not exist, the API should return http status code 404 (Not Found)
 - [x] In case of an unexpected error, the API should return a status code 500 (Internal Server Error) along with the error message
 - [x] Errors are returned as JSON objects
+
+### Write an API to create a new accoutn for an existing customer
+
+Acceptance Criteria
+
+- [x] A new account can only be opened with a minimum deposit of 5000.00
+- [x] Accounts can only be savings or cheque
+- [x] In case of an unexpected error, the API should return a status code 500 (Internal Server Error) along with the error message
+- [x] The API should return the new account ID, when the new account is opened with the status code as 201 (CREATED)

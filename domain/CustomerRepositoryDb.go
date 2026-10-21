@@ -2,9 +2,6 @@ package domain
 
 import (
 	"database/sql"
-	"fmt"
-	"os"
-	"time"
 
 	"github.com/codacube/go-microservice-banking/errs"
 	"github.com/codacube/go-microservice-banking/logger"
@@ -117,25 +114,7 @@ func (db CustomerRepositoryDb) ByID(id string) (*Customer, *errs.AppError) {
 	return &customer, nil
 }
 
-func NewCustomerRepositoryDb() CustomerRepositoryDb {
-	dbUser := os.Getenv("DB_USER")
-	dbPasswd := os.Getenv("DB_PASS")
-	dbAddr := os.Getenv("DB_ADDR")
-	dbPort := os.Getenv("DB_PORT")
-	dbName := os.Getenv("DB_NAME")
+func NewCustomerRepositoryDb(dbClient *sqlx.DB) CustomerRepositoryDb {
 
-	// The appended flags might be needed to for localhost development, but appears to work without it
-	// sql.Open("mysql", "root:your_strong_password@tcp(localhost:3306)/banking?allowPublicKeyRetrieval=true&parseTime=true&columnsWithAlias=true")
-	dataSource := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUser, dbPasswd, dbAddr, dbPort, dbName)
-	// dataSource := fmt.Sprintf("%s:%s@tcp(localhost:3306)/banking", dbUser, dbPasswd)
-	client, err := sqlx.Open("mysql", dataSource)
-	if err != nil {
-		panic(err)
-	}
-	// See "Important settings" section.
-	client.SetConnMaxLifetime(time.Minute * 3)
-	client.SetMaxOpenConns(10)
-	client.SetMaxIdleConns(10)
-
-	return CustomerRepositoryDb{client: client}
+	return CustomerRepositoryDb{dbClient}
 }
