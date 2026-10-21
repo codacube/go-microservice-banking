@@ -37,13 +37,14 @@ func Start() {
 
 	// ch := CustomerHandlers{service: service.NewCustomerService(domain.NewCustomerRepositoryStub())}
 	customerRepositoryDb := domain.NewCustomerRepositoryDb(dbClient)
+	accountRepositoryDb := domain.NewAccountRepositoryDb(dbClient)
 	ch := CustomerHandlers{service: service.NewCustomerService(customerRepositoryDb)}
-	// accountRepositoryDb := domain.NewAccountRepositoryDb(dbClient)
-	// ch := CustomerHandlers{service: service.NewCustomerService(customerRepositoryDb)}
+	ah := AccountHandler{service: service.NewAccountService(accountRepositoryDb)}
 
 	// Define routes
 	router.HandleFunc("/customers", ch.getAllCustomers).Methods(http.MethodGet)
 	router.HandleFunc("/customers/{customer_id:[0-9]+}", ch.getCustomer).Methods(http.MethodGet)
+	router.HandleFunc("/customers/{customer_id:[0-9]+}/account", ah.NewAccount).Methods(http.MethodPost)
 
 	// Start server
 	address := os.Getenv("SERVER_ADDRESS")
@@ -70,4 +71,6 @@ func getDBClient() *sqlx.DB {
 	client.SetConnMaxLifetime(time.Minute * 3)
 	client.SetMaxOpenConns(10)
 	client.SetMaxIdleConns(10)
+
+	return client
 }
