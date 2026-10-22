@@ -9,7 +9,8 @@ import (
 )
 
 type AccountService interface {
-	NewAccount(dto.NewAccountRequest) (*dto.NewAccountResponse, *errs.AppError)
+	NewAccount(request dto.NewAccountRequest) (*dto.NewAccountResponse, *errs.AppError)
+	NewTransaction(request dto.NewTransactionRequest) (*dto.NewTransactionRequest, *errs.AppError)
 }
 
 type DefaultAccountService struct {
@@ -18,8 +19,7 @@ type DefaultAccountService struct {
 
 func (s DefaultAccountService) NewAccount(req dto.NewAccountRequest) (*dto.NewAccountResponse, *errs.AppError) {
 	// Validate incoming request
-	err := req.Validate()
-	if err != nil {
+	if err := req.Validate(); err != nil {
 		return nil, err
 	}
 
@@ -37,6 +37,29 @@ func (s DefaultAccountService) NewAccount(req dto.NewAccountRequest) (*dto.NewAc
 		return nil, err
 	}
 	response := newAccount.ToNewAccountResponseDTO()
+
+	return &response, nil
+}
+
+func (s DefaultAccountService) NewTransaction(req dto.NewTransactionRequest) (*dto.NewTransactionResponse, *errs.AppError) {
+	// Validate incoming request
+	if err := req.Validate(); err != nil {
+		return nil, err
+	}
+
+	// Create a new transaction
+	t := domain.Transaction{
+		TransactionID:   "",
+		AccountID:       req.AccountID,
+		Amount:          req.Amount,
+		TransactionType: req.TransactionType,
+		TransactionDate: time.Now().Format("2006-01-02T15:04:05"),
+	}
+	newTransaction, err := s.repo.SaveTransaction(t)
+	if err != nil {
+		return nil, err
+	}
+	response := newTransaction.ToNewTransactionResponseDTO()
 
 	return &response, nil
 }

@@ -58,3 +58,15 @@ Acceptance Criteria
 - [x] Accounts can only be savings or cheque
 - [x] In case of an unexpected error, the API should return a status code 500 (Internal Server Error) along with the error message
 - [x] The API should return the new account ID, when the new account is opened with the status code as 201 (CREATED)
+
+### Create a transaction in a bank account
+
+Acceptance Criteria
+
+Write an API to create a new transaction for an existing customer
+
+- [ ] Transaction can only be "withdrawal" or "deposit"
+- [ ] Amount cannot be negative
+- [ ] Withdrawal amount should be available in the account
+- [ ] Successful transaction should respond with the updated balance and the transaction id
+- [ ] Error handling should be done for a bad request, validation and unexpected errors from the server side and should return the appropriate http status code with a message
