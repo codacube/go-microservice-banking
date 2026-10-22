@@ -10,7 +10,7 @@ import (
 
 type AccountService interface {
 	NewAccount(request dto.NewAccountRequest) (*dto.NewAccountResponse, *errs.AppError)
-	NewTransaction(request dto.NewTransactionRequest) (*dto.NewTransactionRequest, *errs.AppError)
+	NewTransaction(request dto.NewTransactionRequest) (*dto.NewTransactionResponse, *errs.AppError)
 }
 
 type DefaultAccountService struct {
