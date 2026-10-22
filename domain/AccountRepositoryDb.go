@@ -38,7 +38,7 @@ func NewAccountRepositoryDb(dbClient *sqlx.DB) AccountRepositoryDb {
 func (db AccountRepositoryDb) SaveTransaction(t Transaction) (*Transaction, *errs.AppError) {
 	sqlInsert := "INSERT INTO transactions (account_id, amount, transaction_type, transaction_date) values (?, ?, ?, ?)"
 
-	result, err := db.client.Exec(sqlInsert, t.AccountID, t.Amount, t.TransactionType, t.TransactionType)
+	result, err := db.client.Exec(sqlInsert, t.AccountID, t.Amount, t.TransactionType, t.TransactionDate)
 	if err != nil {
 		logger.Error("Error while creating new transaction: " + err.Error())
 		return nil, errs.NewUnexpectedError("Unexpected error from database")
