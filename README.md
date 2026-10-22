@@ -65,8 +65,8 @@ Acceptance Criteria
 
 Write an API to create a new transaction for an existing customer
 
-- [ ] Transaction can only be "withdrawal" or "deposit"
-- [ ] Amount cannot be negative
+- [x] Transaction can only be "withdrawal" or "deposit"
+- [x] Amount cannot be negative
 - [ ] Withdrawal amount should be available in the account
-- [ ] Successful transaction should respond with the updated balance and the transaction id
-- [ ] Error handling should be done for a bad request, validation and unexpected errors from the server side and should return the appropriate http status code with a message
+- [x] Successful transaction should respond with the updated balance and the transaction id
+- [x] Error handling should be done for a bad request, validation and unexpected errors from the server side and should return the appropriate http status code with a message
