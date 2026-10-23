@@ -117,7 +117,11 @@ func (db AccountRepositoryDb) FindBy(accountID string) (*Account, *errs.AppError
 
 	findSQL := "SELECT account_id, customer_id, opening_date, account_type, amount FROM accounts WHERE account_id = ?"
 
-	if err := db.client.Select(&account, findSQL, accountID); err != nil {
+	if err := db.client.Get(&account, findSQL, accountID); err != nil {
+		if err == sql.ErrNoRows {
+			logger.Error("Account not found")
+			return nil, errs.NewNotFoundError("Account not found")
+		}
 		logger.Error("Error whilst fetching account information: " + err.Error())
 		return nil, errs.NewUnexpectedError("Unexpected database error")
 	}
