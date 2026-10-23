@@ -16,7 +16,7 @@ Simple microservice project that showcases:
 
 - **app/** handles HTTP
 - **service/** co-ordinates use cases
-- **domain/** holds business types nd repository interfaces
+- **domain/** holds business types and repository interfaces
 - **dto/** defines API shapes
 
 ## For testing
