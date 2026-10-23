@@ -26,7 +26,7 @@ type NewTransactionResponse struct {
 }
 
 func (r NewTransactionRequest) Validate() *errs.AppError {
-	if strings.ToLower(r.TransactionType) != "widthdrawal" && strings.ToLower(r.TransactionType) != "deposit" {
+	if !r.IsTransactionTypeWithdrawal() && !r.IsTransactionTypeDeposit() {
 		return errs.NewValidationError("A transaction must be of type 'withdrawal' or 'deposit'")
 	}
 	if r.Amount < 0 {
@@ -37,9 +37,9 @@ func (r NewTransactionRequest) Validate() *errs.AppError {
 }
 
 func (r NewTransactionRequest) IsTransactionTypeWithdrawal() bool {
-	return r.TransactionType == WITHDRAWAL
+	return strings.ToLower(r.TransactionType) == WITHDRAWAL
 }
 
 func (r NewTransactionRequest) IsTransactionTypeDeposit() bool {
-	return r.TransactionType == DEPOSIT
+	return strings.ToLower(r.TransactionType) == DEPOSIT
 }

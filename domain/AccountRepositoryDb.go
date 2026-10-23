@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"database/sql"
 	"strconv"
 
 	"github.com/codacube/go-microservice-banking/errs"
@@ -36,53 +37,77 @@ func NewAccountRepositoryDb(dbClient *sqlx.DB) AccountRepositoryDb {
 }
 
 func (db AccountRepositoryDb) SaveTransaction(t Transaction) (*Transaction, *errs.AppError) {
-	// Atomic transactions, all failures are rolled back and all successes are committed.
 	tx, err := db.client.Begin()
 	if err != nil {
 		logger.Error("Error whilst starting a new transaction for bank account transaction: " + err.Error())
 		return nil, errs.NewUnexpectedError(("Unexpected database error"))
 	}
+	// A deferred function runs when SaveTransaction returns, including on early
+	// returns below. Rolling back undoes any partial database changes and releases
+	// the account lock. After a successful Commit, Rollback returns sql.ErrTxDone,
+	// which is expected because the transaction has already finished.
+	defer func() {
+		if err := tx.Rollback(); err != nil && err != sql.ErrTxDone {
+			logger.Error("Error while rolling back bank account transaction: " + err.Error())
+		}
+	}()
 
-	// Insert transaction
+	var balance float64
+	// Lock this account row until the transaction finishes. If another withdrawal
+	// is running at the same time, it must wait here and then check the updated
+	// balance, rather than also approving itself against the old balance.
+	err = tx.QueryRow("SELECT amount FROM accounts WHERE account_id = ? FOR UPDATE", t.AccountID).Scan(&balance)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			logger.Error("Account not found while saving transaction")
+			return nil, errs.NewNotFoundError("Account not found")
+		}
+		logger.Error("Error while checking account balance: " + err.Error())
+		return nil, errs.NewUnexpectedError("Unexpected database error")
+	}
+
+	if t.IsWithdrawal() && balance < t.Amount {
+		return nil, errs.NewValidationError("Insufficient balance in the account")
+	}
+
 	sqlInsert := "INSERT INTO transactions (account_id, amount, transaction_type, transaction_date) values (?, ?, ?, ?)"
-	result, _ := tx.Exec(sqlInsert, t.AccountID, t.Amount, t.TransactionType, t.TransactionDate)
+	result, err := tx.Exec(sqlInsert, t.AccountID, t.Amount, t.TransactionType, t.TransactionDate)
+	if err != nil {
+		logger.Error("Error while inserting transaction: " + err.Error())
+		return nil, errs.NewUnexpectedError("Unexpected database error")
+	}
 
-	// Adjust the account balance
+	transactionID, err := result.LastInsertId()
+	if err != nil {
+		logger.Error("Error whilst getting the ID for the new transaction: " + err.Error())
+		return nil, errs.NewUnexpectedError("Unexpected error from database")
+	}
+
 	if t.IsWithdrawal() {
 		_, err = tx.Exec("UPDATE accounts SET amount = amount - ? WHERE account_id = ?", t.Amount, t.AccountID)
 	} else {
 		_, err = tx.Exec("UPDATE accounts SET amount = amount + ? WHERE account_id = ?", t.Amount, t.AccountID)
 	}
 
-	// If an error then Rollback. Changes to both tables will be reverted
 	if err != nil {
-		tx.Rollback()
-		logger.Error("Error while saving transacton: " + err.Error())
+		logger.Error("Error while updating account balance: " + err.Error())
 		return nil, errs.NewUnexpectedError("Unexpected database error")
 	}
 
-	// Everything is good, commit the transaction
+	err = tx.QueryRow("SELECT amount FROM accounts WHERE account_id = ?", t.AccountID).Scan(&balance)
+	if err != nil {
+		logger.Error("Error while reading updated account balance: " + err.Error())
+		return nil, errs.NewUnexpectedError("Unexpected database error")
+	}
+
 	err = tx.Commit()
 	if err != nil {
-		tx.Rollback()
 		logger.Error("Error while committing transaction for bank account: " + err.Error())
 		return nil, errs.NewUnexpectedError("Unexpected database error")
 	}
 
-	transactionID, err := result.LastInsertId()
-	if err != nil {
-		logger.Error("Error whilst last insert id for the new transaction: " + err.Error())
-		return nil, errs.NewUnexpectedError("Unexpected error from database")
-	}
-
-	account, appError := db.FindBy(t.AccountID)
-	if appError != nil {
-		return nil, appError
-	}
-
-	// Update the transaction struct with the new details
 	t.TransactionID = strconv.FormatInt(transactionID, 10)
-	t.Amount = account.Amount
+	t.Amount = balance
 
 	return &t, nil
 }
