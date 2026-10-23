@@ -33,17 +33,23 @@ func (h AccountHandler) NewAccount(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h AccountHandler) NewTransaction(w http.ResponseWriter, r *http.Request) {
+	// Get the account_id and customer_id from the URL
 	vars := mux.Vars(r)
 	accountID := vars["account_id"]
-	// customerID := vars["customer_id"]
+	customerID := vars["customer_id"]
 
+	// Decode incoming request
 	var request dto.NewTransactionRequest
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
 		writeResponse(w, http.StatusBadRequest, err.Error())
 	} else {
+
+		// Build the request object
 		request.AccountID = accountID
-		// request.CustomerID = customerID
+		request.CustomerID = customerID
+
+		// Save the new transaction
 		transaction, appError := h.service.NewTransaction(request)
 		if appError != nil {
 			writeResponse(w, appError.Code, appError.Message)

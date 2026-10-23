@@ -6,9 +6,12 @@ import (
 	"github.com/codacube/go-microservice-banking/errs"
 )
 
+const WITHDRAWAL = "withdrawal"
+const DEPOSIT = "deposit"
+
 type NewTransactionRequest struct {
-	AccountID string `json:"account_id"`
-	// CustomerID      string  `json:"customer_id"`
+	AccountID       string  `json:"account_id"`
+	CustomerID      string  `json:"customer_id"`
 	Amount          float64 `json:"amount"`
 	TransactionType string  `json:"transaction_type"`
 	TransactionDate string  `json:"transaction_date"`
@@ -23,4 +26,12 @@ func (r NewTransactionRequest) Validate() *errs.AppError {
 	}
 	// TODO: Check that the amount is available in the account??
 	return nil
+}
+
+func (r NewTransactionRequest) IsTransactionTypeWithdrawal() bool {
+	return r.TransactionType == WITHDRAWAL
+}
+
+func (r NewTransactionRequest) IsTransactionTypeDeposit() bool {
+	return r.TransactionType == DEPOSIT
 }

@@ -46,6 +46,15 @@ func (s DefaultAccountService) NewTransaction(req dto.NewTransactionRequest) (*d
 	if err := req.Validate(); err != nil {
 		return nil, err
 	}
+	if req.IsTransactionTypeWithdrawal() {
+		account, err := s.repo.FindBy(req.AccountID)
+		if err != nil {
+			return nil, err
+		}
+		if !account.CanWithdraw(req.Amount) {
+			return nil, errs.NewValidationError("Insufficient balance in the account")
+		}
+	}
 
 	// Create a new transaction
 	t := domain.Transaction{
@@ -55,11 +64,11 @@ func (s DefaultAccountService) NewTransaction(req dto.NewTransactionRequest) (*d
 		TransactionType: req.TransactionType,
 		TransactionDate: time.Now().Format("2006-01-02T15:04:05"),
 	}
-	newTransaction, err := s.repo.SaveTransaction(t)
+	transaction, err := s.repo.SaveTransaction(t)
 	if err != nil {
 		return nil, err
 	}
-	response := newTransaction.ToNewTransactionResponseDTO()
+	response := transaction.ToDTO()
 
 	return &response, nil
 }

@@ -36,20 +36,66 @@ func NewAccountRepositoryDb(dbClient *sqlx.DB) AccountRepositoryDb {
 }
 
 func (db AccountRepositoryDb) SaveTransaction(t Transaction) (*Transaction, *errs.AppError) {
-	sqlInsert := "INSERT INTO transactions (account_id, amount, transaction_type, transaction_date) values (?, ?, ?, ?)"
-
-	result, err := db.client.Exec(sqlInsert, t.AccountID, t.Amount, t.TransactionType, t.TransactionDate)
+	// Atomic transactions, all failures are rolled back and all successes are committed.
+	tx, err := db.client.Begin()
 	if err != nil {
-		logger.Error("Error while creating new transaction: " + err.Error())
-		return nil, errs.NewUnexpectedError("Unexpected error from database")
+		logger.Error("Error whilst starting a new transaction for bank account transaction: " + err.Error())
+		return nil, errs.NewUnexpectedError(("Unexpected database error"))
 	}
 
-	id, err := result.LastInsertId()
+	// Insert transaction
+	sqlInsert := "INSERT INTO transactions (account_id, amount, transaction_type, transaction_date) values (?, ?, ?, ?)"
+	result, _ := tx.Exec(sqlInsert, t.AccountID, t.Amount, t.TransactionType, t.TransactionDate)
+
+	// Adjust the account balance
+	if t.IsWithdrawal() {
+		_, err = tx.Exec("UPDATE accounts SET amount = amount - ? WHERE account_id = ?", t.Amount, t.AccountID)
+	} else {
+		_, err = tx.Exec("UPDATE accounts SET amount = amount + ? WHERE account_id = ?", t.Amount, t.AccountID)
+	}
+
+	// If an error then Rollback. Changes to both tables will be reverted
+	if err != nil {
+		tx.Rollback()
+		logger.Error("Error while saving transacton: " + err.Error())
+		return nil, errs.NewUnexpectedError("Unexpected database error")
+	}
+
+	// Everything is good, commit the transaction
+	err = tx.Commit()
+	if err != nil {
+		tx.Rollback()
+		logger.Error("Error while committing transaction for bank account: " + err.Error())
+		return nil, errs.NewUnexpectedError("Unexpected database error")
+	}
+
+	transactionID, err := result.LastInsertId()
 	if err != nil {
 		logger.Error("Error whilst last insert id for the new transaction: " + err.Error())
 		return nil, errs.NewUnexpectedError("Unexpected error from database")
 	}
 
-	t.TransactionID = strconv.FormatInt(id, 10)
+	account, appError := db.FindBy(t.AccountID)
+	if appError != nil {
+		return nil, appError
+	}
+
+	// Update the transaction struct with the new details
+	t.TransactionID = strconv.FormatInt(transactionID, 10)
+	t.Amount = account.Amount
+
 	return &t, nil
+}
+
+func (db AccountRepositoryDb) FindBy(accountID string) (*Account, *errs.AppError) {
+	var account Account
+
+	findSQL := "SELECT account_id, customer_id, opening_date, account_type, amount FROM accounts WHERE account_id = ?"
+
+	if err := db.client.Select(&account, findSQL, accountID); err != nil {
+		logger.Error("Error whilst fetching account information: " + err.Error())
+		return nil, errs.NewUnexpectedError("Unexpected database error")
+	}
+
+	return &account, nil
 }
