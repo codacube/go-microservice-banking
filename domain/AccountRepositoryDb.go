@@ -13,6 +13,15 @@ type AccountRepositoryDb struct {
 	client *sqlx.DB
 }
 
+type accountDBRecord struct {
+	AccountID   string  `db:"account_id"`
+	CustomerID  string  `db:"customer_id"`
+	OpeningDate string  `db:"opening_date"`
+	AccountType string  `db:"account_type"`
+	Amount      float64 `db:"amount"`
+	Status      string  `db:"status"`
+}
+
 func (db AccountRepositoryDb) Save(a Account) (*Account, *errs.AppError) {
 	sqlInsert := "INSERT INTO accounts (customer_id, opening_date, account_type, amount, status) values (?, ?, ?, ?, ?);"
 
@@ -113,7 +122,7 @@ func (db AccountRepositoryDb) SaveTransaction(t Transaction) (*Transaction, *err
 }
 
 func (db AccountRepositoryDb) FindBy(accountID string) (*Account, *errs.AppError) {
-	var account Account
+	var account accountDBRecord
 
 	findSQL := "SELECT account_id, customer_id, opening_date, account_type, amount FROM accounts WHERE account_id = ?"
 
@@ -126,5 +135,12 @@ func (db AccountRepositoryDb) FindBy(accountID string) (*Account, *errs.AppError
 		return nil, errs.NewUnexpectedError("Unexpected database error")
 	}
 
-	return &account, nil
+	return &Account{
+		AccountID:   account.AccountID,
+		CustomerID:  account.CustomerID,
+		OpeningDate: account.OpeningDate,
+		AccountType: account.AccountType,
+		Amount:      account.Amount,
+		Status:      account.Status,
+	}, nil
 }
