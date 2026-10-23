@@ -7,6 +7,7 @@ import (
 
 // Business Side Layer - Domain Layer
 
+// Belongs to the domain. The business logic defines status as "active" or "inactive"
 type Customer struct {
 	Id          string
 	Name        string

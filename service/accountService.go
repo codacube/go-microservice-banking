@@ -36,7 +36,7 @@ func (s DefaultAccountService) NewAccount(req dto.NewAccountRequest) (*dto.NewAc
 	if err != nil {
 		return nil, err
 	}
-	response := newAccount.ToNewAccountResponseDTO()
+	response := newAccount.ToDTO()
 
 	return &response, nil
 }

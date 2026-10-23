@@ -12,6 +12,11 @@ type NewAccountRequest struct {
 	Amount      float64 `json:"amount"`
 }
 
+type NewAccountResponse struct {
+	AccountID string `json:"account_id"`
+}
+
+
 func (r NewAccountRequest) Validate() *errs.AppError {
 	if r.Amount < 5000 {
 		return errs.NewValidationError("To open a new account you need to deposit at least 5000.00")

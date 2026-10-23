@@ -17,6 +17,14 @@ type NewTransactionRequest struct {
 	TransactionDate string  `json:"transaction_date"`
 }
 
+type NewTransactionResponse struct {
+	TransactionID   string  `json:"transaction_id"`
+	AccountID       string  `json:"account_id"`
+	Balance         float64 `json:"new_balance"`
+	TransactionType string  `json:"transaction_type"`
+	TransactionDate string  `json:"transaction_date"`
+}
+
 func (r NewTransactionRequest) Validate() *errs.AppError {
 	if strings.ToLower(r.TransactionType) != "widthdrawal" && strings.ToLower(r.TransactionType) != "deposit" {
 		return errs.NewValidationError("A transaction must be of type 'withdrawal' or 'deposit'")

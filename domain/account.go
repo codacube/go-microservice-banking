@@ -14,7 +14,7 @@ type Account struct {
 	Status      string
 }
 
-func (a Account) ToNewAccountResponseDTO() dto.NewAccountResponse {
+func (a Account) ToDTO() dto.NewAccountResponse {
 	return dto.NewAccountResponse{AccountID: a.AccountID}
 }
 

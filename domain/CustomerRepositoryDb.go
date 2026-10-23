@@ -15,6 +15,7 @@ type CustomerRepositoryDb struct {
 	client *sqlx.DB
 }
 
+// Database representation (ie. status = 1 or 0)
 type customerDBRecord struct {
 	Id          string `db:"customer_id"`
 	Name        string `db:"name"`
