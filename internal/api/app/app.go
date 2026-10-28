@@ -9,6 +9,7 @@ import (
 
 	"github.com/codacube/go-microservice-banking/internal/api/domain"
 	"github.com/codacube/go-microservice-banking/internal/api/service"
+	"github.com/codacube/go-microservice-banking/internal/logger"
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 )
@@ -60,8 +61,9 @@ func Start() {
 	router.Use(am.authorizationHandler())
 
 	// Start server
-	address := os.Getenv("SERVER_ADDRESS")
-	port := os.Getenv("SERVER_PORT")
+	address := os.Getenv("API_SERVER_ADDRESS")
+	port := os.Getenv("API_SERVER_PORT")
+	logger.Info(fmt.Sprintf("Starting Rest API server on %s:%s ...", address, port))
 	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%s", address, port), router))
 }
 
