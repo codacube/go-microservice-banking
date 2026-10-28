@@ -14,6 +14,10 @@ Simple microservice project that showcases:
 - Auth
   - JWT Tokens
 
+# Important
+
+- This demo uses plaintext passwords. Never use plaintext passwords in a live system, always encrypt them
+
 # Architecture / Structure
 
 For simplicity I've put the two servers into their own folders. They both share the **/errs** and **logger** packages
@@ -25,6 +29,17 @@ For simplicity I've put the two servers into their own folders. They both share 
 
 - GUI - Use [Bruno](https://www.usebruno.com/)
 - CLI - curl
+
+- POST the login JSON to http://localhost:8181/auth/login
+
+```json
+{
+  "username": "admin",
+  "password": "abc123"
+}
+```
+
+- Then try accessing the server using the generated token
 
 ```bash
 curl -i http://localhost:8000/greet
