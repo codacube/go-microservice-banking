@@ -32,6 +32,25 @@ curl -i -H "Content-Type: application/xml" http://localhost:8000/customers
 curl -i -H "Content-Type: application/json" http://localhost:8000/customers
 ```
 
+## Routes
+
+**Admin can do the following:**
+| GetAllCustomers | GET | /customer |
+| GetCustomer | GET | /customer/{customer_id} |
+| NewAccount | POST | /customer/{customer_id}/account |
+| NewTransaction | POST | /customer/{customer_id}/account/{account_id} |
+
+**User role can do the following:**
+| Get Customer by ID | GET | /customer/{customer_id} |
+| New Transaction | POST | /customer/{customer_id}/account/{account_id} |
+
+```json
+{
+  "admin": ["GetAllCustomers", "GetCustomer", "NewAccount". "NewTransaction"],
+  "user": ["GetCustomer", "NewTransaction"]
+}
+```
+
 ## User Stories
 
 ### Retrieving all Customers

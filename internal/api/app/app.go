@@ -15,7 +15,7 @@ import (
 
 func sanityCheck() {
 	// Check if critical variables exist
-	if os.Getenv("SERVER_ADDRESS") == "" || os.Getenv("SERVER_PORT") == "" {
+	if os.Getenv("API_SERVER_ADDRESS") == "" || os.Getenv("API_SERVER_PORT") == "" {
 		log.Fatal("Environment variables not defined: SERVER_ADDRESS or SERVER_PORT is missing")
 	}
 	if os.Getenv("DB_ADDR") == "" || os.Getenv("DB_PORT") == "" || os.Getenv("DB_NAME") == "" {
@@ -42,10 +42,22 @@ func Start() {
 	ah := AccountHandler{service: service.NewAccountService(accountRepositoryDb)}
 
 	// Define routes
-	router.HandleFunc("/customers", ch.getAllCustomers).Methods(http.MethodGet)
-	router.HandleFunc("/customers/{customer_id:[0-9]+}", ch.getCustomer).Methods(http.MethodGet)
-	router.HandleFunc("/customers/{customer_id:[0-9]+}/account", ah.NewAccount).Methods(http.MethodPost)
-	router.HandleFunc("/customers/{customer_id:[0-9]+}/account/{account_id:[0-9]+}", ah.NewTransaction).Methods(http.MethodPost)
+	router.HandleFunc("/customers", ch.getAllCustomers).
+		Methods(http.MethodGet).
+		Name("GetAllCustomers")
+	router.HandleFunc("/customers/{customer_id:[0-9]+}", ch.getCustomer).
+		Methods(http.MethodGet).
+		Name("GetCustomer")
+	router.HandleFunc("/customers/{customer_id:[0-9]+}/account", ah.NewAccount).
+		Methods(http.MethodPost).
+		Name("NewAccount")
+	router.HandleFunc("/customers/{customer_id:[0-9]+}/account/{account_id:[0-9]+}", ah.NewTransaction).
+		Methods(http.MethodPost).
+		Name("NewTransaction")
+
+	am := AuthMiddleware{domain.NewAuthRepository()}
+	// No token? No access to APIs!
+	router.Use(am.authorizationHandler())
 
 	// Start server
 	address := os.Getenv("SERVER_ADDRESS")

@@ -8,12 +8,12 @@ TODO
 # To Build / Run
 
 ```go
-go build -o bin/api ./cmd/api
+go build -o bin/auth ./cmd/auth
 
-go run ./cmd/api
+go run ./cmd/auth
 ```
 
-# ## Summary of the internal/auth packages
+## Summary of the internal/auth packages
 
 - app: this is the startup/bootstrap layer. It sets up the HTTP router, loads environment config, creates the DB client, and registers the auth endpoints. See `app.go`.
   - It wires the service into routes like login, verify, and a placeholder register endpoint.
