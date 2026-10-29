@@ -2,9 +2,11 @@ package app
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/codacube/go-microservice-banking/internal/api/domain"
+	"github.com/codacube/go-microservice-banking/internal/logger"
 	"github.com/gorilla/mux"
 )
 
@@ -22,13 +24,17 @@ func (a AuthMiddleware) authorizationHandler() func(http.Handler) http.Handler {
 			if authHeader != "" {
 				token := getTokenFromHeader(authHeader)
 
-				isAuthorized := a.repo.IsAuthorised(token, currentRoute.GetName(), currentRouteVars)
+				logger.Info("token = " + token) // ####
 
-				if isAuthorized {
+				isAuthorised := a.repo.IsAuthorised(token, currentRoute.GetName(), currentRouteVars)
+
+				logger.Info("is authorised " + strconv.FormatBool(isAuthorised)) // ####
+
+				if isAuthorised {
 					// Next middleware or router
 					next.ServeHTTP(w, r)
 				} else {
-					writeResponse(w, http.StatusForbidden, "Unauthorized")
+					writeResponse(w, http.StatusForbidden, "Unauthorised")
 				}
 			} else {
 				writeResponse(w, http.StatusUnauthorized, "missing token")

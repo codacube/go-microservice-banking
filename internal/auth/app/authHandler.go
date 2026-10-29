@@ -2,6 +2,7 @@ package app
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -34,7 +35,6 @@ func (h AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	writeResponse(w, http.StatusOK, *token)
-
 }
 
 /*
@@ -60,7 +60,6 @@ func (h AuthHandler) Verify(w http.ResponseWriter, r *http.Request) {
 	}
 
 	writeResponse(w, http.StatusOK, authorisedResponse())
-
 }
 
 func (h AuthHandler) Refresh(w http.ResponseWriter, r *http.Request) {
@@ -91,6 +90,8 @@ func authorisedResponse() map[string]bool {
 
 func writeResponse(w http.ResponseWriter, code int, data interface{}) {
 	w.Header().Add("Content-Type", "application/json")
+	logger.Info(fmt.Sprintf("code %d", code)) // ####
+	logger.Info(fmt.Sprintf("data %v", data)) // ####
 	w.WriteHeader(code)
 	if err := json.NewEncoder(w).Encode(data); err != nil {
 		panic(err)
