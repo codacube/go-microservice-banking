@@ -33,7 +33,7 @@ func (a AuthMiddleware) authorizationHandler() func(http.Handler) http.Handler {
 					writeResponse(w, appError.Code, appError.AsMessage())
 				}
 			} else {
-				appError := errs.AppError{Code: http.StatusForbidden, Message: "Unauthorized"}
+				appError := errs.AppError{Code: http.StatusForbidden, Message: "Missing token"}
 				writeResponse(w, appError.Code, appError.AsMessage())
 			}
 		})
