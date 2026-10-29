@@ -23,10 +23,12 @@ type AuthRepositoryDb struct {
 func (db AuthRepositoryDb) FindBy(username, password string) (*Login, *errs.AppError) {
 	var login Login
 
-	sqlVerify := `SELECT username, u.customer_id, role, group_concat(a.account_id) as account_numbers FROM users u
+	// ONLY_FULL_GROUP_BY is switched on in MySQL, so we need to group by all fields
+	sqlVerify := `SELECT u.username, u.customer_id, u.role, GROUP_CONCAT(a.account_id) as account_numbers
+					FROM users u
 					LEFT JOIN accounts a ON a.customer_id = u.customer_id
 					WHERE username = ? and password = ?
-					GROUP BY u.customer_id;`
+					GROUP BY u.username, u.customer_id, u.role;`
 
 	err := db.client.Get(&login, sqlVerify, username, password)
 	if err != nil {

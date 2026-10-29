@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 
@@ -25,15 +26,15 @@ func Start() {
 	router.HandleFunc("/auth/register", ah.NotImplementedHandler).Methods(http.MethodPost)
 	router.HandleFunc("/auth/verify", ah.Verify).Methods(http.MethodGet)
 
-	address := os.Getenv("SERVER_ADDRESS")
-	port := os.Getenv("SERVER_PORT")
-	log.Println(fmt.Sprintf("Starting OAuth server on %s:%s ...", address, port))
+	address := os.Getenv("AUTH_SERVER_ADDRESS")
+	port := os.Getenv("AUTH_SERVER_PORT")
+	logger.Info(fmt.Sprintf("Starting OAuth server on %s:%s ...", address, port))
 	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%s", address, port), router))
 }
 
 func getDBClient() *sqlx.DB {
 	dbUser := os.Getenv("DB_USER")
-	dbPasswd := os.Getenv("DB_PASSWD")
+	dbPasswd := os.Getenv("DB_PASS")
 	dbAddr := os.Getenv("DB_ADDR")
 	dbPort := os.Getenv("DB_PORT")
 	dbName := os.Getenv("DB_NAME")
@@ -54,10 +55,10 @@ func getDBClient() *sqlx.DB {
 
 func sanityCheck() {
 	envProps := []string{
-		"SERVER_ADDRESS",
-		"SERVER_PORT",
+		"AUTH_SERVER_ADDRESS",
+		"AUTH_SERVER_PORT",
 		"DB_USER",
-		"DB_PASSWD",
+		"DB_PASS",
 		"DB_ADDR",
 		"DB_PORT",
 		"DB_NAME",

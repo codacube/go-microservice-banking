@@ -1,19 +1,12 @@
-TODO
-
-- Add git
-- Finish files
-- use .env file for environment variables
-- Hash the user passwords
-
 # To Build / Run
 
 ```go
-go build -o bin/api ./cmd/api
+go build -o bin/auth ./cmd/auth
 
-go run ./cmd/api
+go run ./cmd/auth
 ```
 
-# ## Summary of the internal/auth packages
+## Summary of the internal/auth packages
 
 - app: this is the startup/bootstrap layer. It sets up the HTTP router, loads environment config, creates the DB client, and registers the auth endpoints. See `app.go`.
   - It wires the service into routes like login, verify, and a placeholder register endpoint.
@@ -33,3 +26,28 @@ In short, the package flow is:
 
 app -> service -> domain
 and dto is the contract layer between HTTP and service code.
+
+## User Roles/Routes
+
+**Admin can do the following:**
+| GetAllCustomers | GET | /customer |
+| GetCustomer | GET | /customer/{customer_id} |
+| NewAccount | POST | /customer/{customer_id}/account |
+| NewTransaction | POST | /customer/{customer_id}/account/{account_id} |
+
+**User role can do the following:**
+| Get Customer by ID | GET | /customer/{customer_id} |
+| New Transaction | POST | /customer/{customer_id}/account/{account_id} |
+
+```json
+{
+  "admin": ["GetAllCustomers", "GetCustomer", "NewAccount". "NewTransaction"],
+  "user": ["GetCustomer", "NewTransaction"]
+}
+```
+
+### Verification of the token
+
+1. Validity of the token (includes the expiry and the signature verification)
+2. Verify if the role has access to the resource
+3. Need to verify if the resource being accessed is for the same user
