@@ -2,11 +2,9 @@ package app
 
 import (
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/codacube/go-microservice-banking/internal/api/domain"
-	"github.com/codacube/go-microservice-banking/internal/logger"
 	"github.com/gorilla/mux"
 )
 
@@ -24,11 +22,7 @@ func (a AuthMiddleware) authorizationHandler() func(http.Handler) http.Handler {
 			if authHeader != "" {
 				token := getTokenFromHeader(authHeader)
 
-				logger.Info("token = " + token) // ####
-
 				isAuthorised := a.repo.IsAuthorised(token, currentRoute.GetName(), currentRouteVars)
-
-				logger.Info("is authorised " + strconv.FormatBool(isAuthorised)) // ####
 
 				if isAuthorised {
 					// Next middleware or router

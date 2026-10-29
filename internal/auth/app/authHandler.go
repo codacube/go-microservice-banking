@@ -2,7 +2,6 @@ package app
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -90,8 +89,6 @@ func authorisedResponse() map[string]bool {
 
 func writeResponse(w http.ResponseWriter, code int, data interface{}) {
 	w.Header().Add("Content-Type", "application/json")
-	logger.Info(fmt.Sprintf("code %d", code)) // ####
-	logger.Info(fmt.Sprintf("data %v", data)) // ####
 	w.WriteHeader(code)
 	if err := json.NewEncoder(w).Encode(data); err != nil {
 		panic(err)
