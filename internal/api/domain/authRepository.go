@@ -33,10 +33,7 @@ func (r RemoteAuthRepository) IsAuthorised(token string, routeName string, vars 
 		return false
 	}
 
-	logger.Info(fmt.Sprintf("m = %v", m))
-
 	return m["isAuthorised"]
-
 }
 
 /*
