@@ -14,6 +14,11 @@ type AuthHandler struct {
 	service service.AuthService
 }
 
+type AuthResponse struct {
+	IsAuthorised bool   `json:"isAuthorised"`
+	Message      string `json:"message,omitempty"`
+}
+
 func (h AuthHandler) NotImplementedHandler(w http.ResponseWriter, r *http.Request) {
 	writeResponse(w, http.StatusOK, "Handle not implemented...")
 }
@@ -56,6 +61,7 @@ func (h AuthHandler) Verify(w http.ResponseWriter, r *http.Request) {
 	appErr := h.service.Verify(urlParams)
 	if appErr != nil {
 		writeResponse(w, appErr.Code, notAuthorisedResponse(appErr.Message))
+		return
 	}
 
 	writeResponse(w, http.StatusOK, authorisedResponse())
@@ -63,6 +69,7 @@ func (h AuthHandler) Verify(w http.ResponseWriter, r *http.Request) {
 
 func (h AuthHandler) Refresh(w http.ResponseWriter, r *http.Request) {
 	var refreshRequest dto.RefreshTokenRequest
+
 	if err := json.NewDecoder(r.Body).Decode(&refreshRequest); err != nil {
 		logger.Error("Error while decoding refresh token request: " + err.Error())
 		w.WriteHeader(http.StatusBadRequest)
@@ -71,20 +78,23 @@ func (h AuthHandler) Refresh(w http.ResponseWriter, r *http.Request) {
 	token, appErr := h.service.Refresh(refreshRequest)
 	if appErr != nil {
 		writeResponse(w, appErr.Code, appErr.AsMessage())
+		return
 	}
 
 	writeResponse(w, http.StatusOK, *token)
 }
 
-func notAuthorisedResponse(msg string) map[string]interface{} {
-	return map[string]interface{}{
-		"isAuthorised": false,
-		"message":      msg,
+func notAuthorisedResponse(msg string) AuthResponse {
+	return AuthResponse{
+		IsAuthorised: false,
+		Message:      msg,
 	}
 }
 
-func authorisedResponse() map[string]bool {
-	return map[string]bool{"isAuthorised": true}
+func authorisedResponse() AuthResponse {
+	return AuthResponse{
+		IsAuthorised: true,
+	}
 }
 
 func writeResponse(w http.ResponseWriter, code int, data interface{}) {

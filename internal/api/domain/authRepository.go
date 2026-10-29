@@ -16,6 +16,12 @@ type AuthRepository interface {
 type RemoteAuthRepository struct {
 }
 
+// Message is used for debug only
+type verifyResponse struct {
+	IsAuthorised bool   `json:"isAuthorised"`
+	Message      string `json:"message,omitempty"`
+}
+
 func (r RemoteAuthRepository) IsAuthorised(token string, routeName string, vars map[string]string) bool {
 	var response *http.Response
 	var err error
@@ -27,13 +33,17 @@ func (r RemoteAuthRepository) IsAuthorised(token string, routeName string, vars 
 		return false
 	}
 
-	m := map[string]bool{}
-	if err = json.NewDecoder(response.Body).Decode(&m); err != nil {
+	var result verifyResponse
+	if err = json.NewDecoder(response.Body).Decode(&result); err != nil {
 		logger.Error("Error while decoding response from auth server:" + err.Error())
 		return false
 	}
 
-	return m["isAuthorised"]
+	if !result.IsAuthorised && result.Message != "" {
+		logger.Info("Authorization denied: " + result.Message)
+	}
+
+	return result.IsAuthorised
 }
 
 /*
