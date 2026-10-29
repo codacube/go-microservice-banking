@@ -58,7 +58,7 @@ func Start() {
 
 	am := AuthMiddleware{domain.NewAuthRepository()}
 	// No token? No access to APIs!
-	router.Use(am.authorizationHandler())
+	router.Use(am.authorisationHandler())
 
 	// Start server
 	address := os.Getenv("API_SERVER_ADDRESS")
