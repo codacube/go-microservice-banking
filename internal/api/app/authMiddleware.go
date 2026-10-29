@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/codacube/go-microservice-banking/internal/api/domain"
+	"github.com/codacube/go-microservice-banking/internal/errs"
 	"github.com/gorilla/mux"
 )
 
@@ -28,10 +29,12 @@ func (a AuthMiddleware) authorizationHandler() func(http.Handler) http.Handler {
 					// Next middleware or router
 					next.ServeHTTP(w, r)
 				} else {
-					writeResponse(w, http.StatusForbidden, "Unauthorised")
+					appError := errs.AppError{Code: http.StatusForbidden, Message: "Unauthorized"}
+					writeResponse(w, appError.Code, appError.AsMessage())
 				}
 			} else {
-				writeResponse(w, http.StatusUnauthorized, "missing token")
+				appError := errs.AppError{Code: http.StatusForbidden, Message: "Unauthorized"}
+				writeResponse(w, appError.Code, appError.AsMessage())
 			}
 		})
 	}
