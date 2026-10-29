@@ -20,7 +20,9 @@ func (a AuthMiddleware) authorizationHandler() func(http.Handler) http.Handler {
 			currentRouteVars := mux.Vars(r)
 			authHeader := r.Header.Get("Authorization")
 
-			if authHeader != "" {
+			// authHeader should = "Bearer <token>"
+			// Check for both no header (""), and a missing token ("Bearer")
+			if authHeader != "" && authHeader != "Bearer" {
 				token := getTokenFromHeader(authHeader)
 
 				isAuthorised := a.repo.IsAuthorised(token, currentRoute.GetName(), currentRouteVars)
