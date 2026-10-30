@@ -13,6 +13,9 @@ Simple microservice project that showcases:
 - Environment variables
 - Auth
   - JWT Tokens
+- Unit Testing
+  - State
+  - Route
 
 # Important
 

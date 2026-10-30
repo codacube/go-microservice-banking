@@ -1,54 +1,55 @@
 package app
 
 import (
-	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/codacube/go-microservice-banking/internal/api/domain"
+	"github.com/codacube/go-microservice-banking/internal/api/dto"
 	"github.com/codacube/go-microservice-banking/internal/api/service"
+	"github.com/codacube/go-microservice-banking/internal/errs"
+	"github.com/gorilla/mux"
+	"go.uber.org/mock/gomock"
 )
 
-func TestGetAllCustomersStatusFilter(t *testing.T) {
-	handler := CustomerHandlers{
-		service: service.NewCustomerService(domain.NewCustomerRepositoryStub()),
-	}
+func setup(t *testing.T) (*mux.Router, *service.MockCustomerService) {
+	t.Helper()
+	ctrl := gomock.NewController(t)
+	mockService := service.NewMockCustomerService(ctrl)
+	ch := CustomerHandlers{service: mockService}
+	router := mux.NewRouter()
+	router.HandleFunc("/customers", ch.getAllCustomers)
+	return router, mockService
+}
 
-	request := httptest.NewRequest(http.MethodGet, "/customers?status=active", nil)
-	response := httptest.NewRecorder()
-	handler.getAllCustomers(response, request)
+func Test_should_return_customers_with_status_code_200(t *testing.T) {
+	router, mockService := setup(t)
 
-	if response.Code != http.StatusOK {
-		t.Fatalf("status code = %d, want %d", response.Code, http.StatusOK)
+	dummyCustomers := []dto.CustomerResponse{
+		{"1001", "Ashish", "New Delhi", "110011", "2000-01-01", "1"},
+		{"1002", "Rob", "New Delhi", "110011", "2000-01-01", "1"},
 	}
+	mockService.EXPECT().GetAllCustomers(domain.CustomerStatus("")).Return(dummyCustomers, nil)
+	request := httptest.NewRequest(http.MethodGet, "/customers", nil)
 
-	var customers []struct {
-		Status string `json:"status"`
-	}
-	if err := json.NewDecoder(response.Body).Decode(&customers); err != nil {
-		t.Fatalf("decode response: %v", err)
-	}
-	if len(customers) != 2 {
-		t.Fatalf("got %d customers, want 2", len(customers))
-	}
-	for _, customer := range customers {
-		if customer.Status != string(domain.CustomerStatusActive) {
-			t.Errorf("customer status = %q, want %q", customer.Status, domain.CustomerStatusActive)
-		}
+	recorder := httptest.NewRecorder()
+	router.ServeHTTP(recorder, request)
+
+	if recorder.Code != http.StatusOK {
+		t.Errorf("status code = %d, want %d", recorder.Code, http.StatusOK)
 	}
 }
 
-func TestGetAllCustomersRejectsUnsupportedStatus(t *testing.T) {
-	handler := CustomerHandlers{
-		service: service.NewCustomerService(domain.NewCustomerRepositoryStub()),
-	}
+func Test_should_return_status_code_500_with_error_message(t *testing.T) {
+	router, mockService := setup(t)
+	mockService.EXPECT().GetAllCustomers(domain.CustomerStatus("")).Return(nil, errs.NewUnexpectedError("some database error"))
+	request := httptest.NewRequest(http.MethodGet, "/customers", nil)
 
-	request := httptest.NewRequest(http.MethodGet, "/customers?status=unknown", nil)
-	response := httptest.NewRecorder()
-	handler.getAllCustomers(response, request)
+	recorder := httptest.NewRecorder()
+	router.ServeHTTP(recorder, request)
 
-	if response.Code != http.StatusBadRequest {
-		t.Fatalf("status code = %d, want %d", response.Code, http.StatusBadRequest)
+	if recorder.Code != http.StatusInternalServerError {
+		t.Errorf("status code = %d, want %d", recorder.Code, http.StatusInternalServerError)
 	}
 }

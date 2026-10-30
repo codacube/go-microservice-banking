@@ -9,15 +9,15 @@ import (
 )
 
 type AccountService interface {
-	NewAccount(request dto.NewAccountRequest) (*dto.NewAccountResponse, *errs.AppError)
-	NewTransaction(request dto.NewTransactionRequest) (*dto.NewTransactionResponse, *errs.AppError)
+	NewAccount(request dto.AccountRequest) (*dto.AccountResponse, *errs.AppError)
+	NewTransaction(request dto.TransactionRequest) (*dto.TransactionResponse, *errs.AppError)
 }
 
 type DefaultAccountService struct {
 	repo domain.AccountRepository
 }
 
-func (s DefaultAccountService) NewAccount(req dto.NewAccountRequest) (*dto.NewAccountResponse, *errs.AppError) {
+func (s DefaultAccountService) NewAccount(req dto.AccountRequest) (*dto.AccountResponse, *errs.AppError) {
 	// Validate incoming request
 	if err := req.Validate(); err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ func (s DefaultAccountService) NewAccount(req dto.NewAccountRequest) (*dto.NewAc
 	return &response, nil
 }
 
-func (s DefaultAccountService) NewTransaction(req dto.NewTransactionRequest) (*dto.NewTransactionResponse, *errs.AppError) {
+func (s DefaultAccountService) NewTransaction(req dto.TransactionRequest) (*dto.TransactionResponse, *errs.AppError) {
 	// Validate incoming request
 	if err := req.Validate(); err != nil {
 		return nil, err

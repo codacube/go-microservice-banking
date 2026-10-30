@@ -14,8 +14,8 @@ type Account struct {
 	Status      string
 }
 
-func (a Account) ToDTO() dto.NewAccountResponse {
-	return dto.NewAccountResponse{AccountID: a.AccountID}
+func (a Account) ToDTO() dto.AccountResponse {
+	return dto.AccountResponse{AccountID: a.AccountID}
 }
 
 func (a Account) CanWithdraw(amount float64) bool {

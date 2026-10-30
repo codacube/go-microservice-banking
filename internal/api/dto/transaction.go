@@ -9,7 +9,7 @@ import (
 const WITHDRAWAL = "withdrawal"
 const DEPOSIT = "deposit"
 
-type NewTransactionRequest struct {
+type TransactionRequest struct {
 	AccountID       string  `json:"account_id"`
 	CustomerID      string  `json:"customer_id"`
 	Amount          float64 `json:"amount"`
@@ -17,7 +17,7 @@ type NewTransactionRequest struct {
 	TransactionDate string  `json:"transaction_date"`
 }
 
-type NewTransactionResponse struct {
+type TransactionResponse struct {
 	TransactionID   string  `json:"transaction_id"`
 	AccountID       string  `json:"account_id"`
 	Balance         float64 `json:"new_balance"`
@@ -25,7 +25,7 @@ type NewTransactionResponse struct {
 	TransactionDate string  `json:"transaction_date"`
 }
 
-func (r NewTransactionRequest) Validate() *errs.AppError {
+func (r TransactionRequest) Validate() *errs.AppError {
 	if !r.IsTransactionTypeWithdrawal() && !r.IsTransactionTypeDeposit() {
 		return errs.NewValidationError("A transaction must be of type 'withdrawal' or 'deposit'")
 	}
@@ -36,10 +36,10 @@ func (r NewTransactionRequest) Validate() *errs.AppError {
 	return nil
 }
 
-func (r NewTransactionRequest) IsTransactionTypeWithdrawal() bool {
+func (r TransactionRequest) IsTransactionTypeWithdrawal() bool {
 	return strings.ToLower(r.TransactionType) == WITHDRAWAL
 }
 
-func (r NewTransactionRequest) IsTransactionTypeDeposit() bool {
+func (r TransactionRequest) IsTransactionTypeDeposit() bool {
 	return strings.ToLower(r.TransactionType) == DEPOSIT
 }

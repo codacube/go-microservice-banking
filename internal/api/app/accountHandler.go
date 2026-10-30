@@ -17,7 +17,7 @@ func (h AccountHandler) NewAccount(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	customerID := vars["customer_id"]
 
-	var request dto.NewAccountRequest
+	var request dto.AccountRequest
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
 		writeResponse(w, http.StatusBadRequest, err.Error())
@@ -39,7 +39,7 @@ func (h AccountHandler) NewTransaction(w http.ResponseWriter, r *http.Request) {
 	customerID := vars["customer_id"]
 
 	// Decode incoming request
-	var request dto.NewTransactionRequest
+	var request dto.TransactionRequest
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
 		writeResponse(w, http.StatusBadRequest, err.Error())
