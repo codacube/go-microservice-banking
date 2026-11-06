@@ -17,6 +17,12 @@ type DefaultAccountService struct {
 	repo domain.AccountRepository
 }
 
+/*
+Tests:
+- Should return a validation error response if the request is invalid
+- Should return an error from the server side if the account cannot be created
+- Should return a valid response if the account is created successfully
+*/
 func (s DefaultAccountService) NewAccount(req dto.AccountRequest) (*dto.AccountResponse, *errs.AppError) {
 	// Validate incoming request
 	if err := req.Validate(); err != nil {
@@ -32,13 +38,11 @@ func (s DefaultAccountService) NewAccount(req dto.AccountRequest) (*dto.AccountR
 		Amount:      req.Amount,
 		Status:      "1",
 	}
-	newAccount, err := s.repo.Save(a)
-	if err != nil {
+	if newAccount, err := s.repo.Save(a); err != nil {
 		return nil, err
+	} else {
+		return newAccount.ToDTO(), nil
 	}
-	response := newAccount.ToDTO()
-
-	return &response, nil
 }
 
 func (s DefaultAccountService) NewTransaction(req dto.TransactionRequest) (*dto.TransactionResponse, *errs.AppError) {

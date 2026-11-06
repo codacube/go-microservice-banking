@@ -9,7 +9,7 @@ import (
 // CustomerService is the primary port that exposes customer use cases to
 // inbound adapters, such as HTTP handlers.
 //
-//go:generate go tool go.uber.org/mock/mockgen -source=customerService.go -destination=mock_customer_service.go -package=service
+//go:generate go tool go.uber.org/mock/mockgen -source=customerService.go -destination=../mocks/service/mock_customer_service.go -package=service
 type CustomerService interface {
 	GetAllCustomers(status domain.CustomerStatus) ([]dto.CustomerResponse, *errs.AppError)
 	GetCustomer(id string) (*dto.CustomerResponse, *errs.AppError)
