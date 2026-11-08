@@ -13,6 +13,13 @@ Simple microservice project that showcases:
 - Environment variables
 - Auth
   - JWT Tokens
+- Unit Testing
+  - State
+  - Route
+
+# Important
+
+- This demo uses plaintext passwords. Never use plaintext passwords in a live system, always encrypt them
 
 # Important
 

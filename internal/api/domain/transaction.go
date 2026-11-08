@@ -18,6 +18,6 @@ func (t Transaction) IsWithdrawal() bool {
 	return t.TransactionType == WITHDRAWAL
 }
 
-func (t Transaction) ToDTO() dto.NewTransactionResponse {
-	return dto.NewTransactionResponse{TransactionID: t.TransactionID, AccountID: t.AccountID, Balance: t.Amount, TransactionType: t.TransactionType, TransactionDate: t.TransactionDate}
+func (t Transaction) ToDTO() dto.TransactionResponse {
+	return dto.TransactionResponse{TransactionID: t.TransactionID, AccountID: t.AccountID, Balance: t.Amount, TransactionType: t.TransactionType, TransactionDate: t.TransactionDate}
 }

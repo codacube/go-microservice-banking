@@ -9,15 +9,21 @@ import (
 )
 
 type AccountService interface {
-	NewAccount(request dto.NewAccountRequest) (*dto.NewAccountResponse, *errs.AppError)
-	NewTransaction(request dto.NewTransactionRequest) (*dto.NewTransactionResponse, *errs.AppError)
+	NewAccount(request dto.AccountRequest) (*dto.AccountResponse, *errs.AppError)
+	NewTransaction(request dto.TransactionRequest) (*dto.TransactionResponse, *errs.AppError)
 }
 
 type DefaultAccountService struct {
 	repo domain.AccountRepository
 }
 
-func (s DefaultAccountService) NewAccount(req dto.NewAccountRequest) (*dto.NewAccountResponse, *errs.AppError) {
+/*
+Tests:
+- Should return a validation error response if the request is invalid
+- Should return an error from the server side if the account cannot be created
+- Should return a valid response if the account is created successfully
+*/
+func (s DefaultAccountService) NewAccount(req dto.AccountRequest) (*dto.AccountResponse, *errs.AppError) {
 	// Validate incoming request
 	if err := req.Validate(); err != nil {
 		return nil, err
@@ -32,16 +38,14 @@ func (s DefaultAccountService) NewAccount(req dto.NewAccountRequest) (*dto.NewAc
 		Amount:      req.Amount,
 		Status:      "1",
 	}
-	newAccount, err := s.repo.Save(a)
-	if err != nil {
+	if newAccount, err := s.repo.Save(a); err != nil {
 		return nil, err
+	} else {
+		return newAccount.ToDTO(), nil
 	}
-	response := newAccount.ToDTO()
-
-	return &response, nil
 }
 
-func (s DefaultAccountService) NewTransaction(req dto.NewTransactionRequest) (*dto.NewTransactionResponse, *errs.AppError) {
+func (s DefaultAccountService) NewTransaction(req dto.TransactionRequest) (*dto.TransactionResponse, *errs.AppError) {
 	// Validate incoming request
 	if err := req.Validate(); err != nil {
 		return nil, err
