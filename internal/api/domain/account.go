@@ -3,7 +3,6 @@ package domain
 import (
 	"time"
 
-	"github.com/codacube/go-microservice-banking/internal/api/domain"
 	"github.com/codacube/go-microservice-banking/internal/api/dto"
 	"github.com/codacube/go-microservice-banking/internal/errs"
 )
@@ -35,7 +34,7 @@ type AccountRepository interface {
 }
 
 func NewAccount(customerID string, accountType string, amount float64) Account {
-	return domain.Account{
+	return Account{
 		CustomerID:  customerID,
 		OpeningDate: time.Now().Format("2006-01-02T15:04:05"),
 		AccountType: accountType,
