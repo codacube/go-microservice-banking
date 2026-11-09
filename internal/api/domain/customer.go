@@ -1,8 +1,8 @@
 package domain
 
 import (
+	"github.com/codacube/banking-lib/errs"
 	"github.com/codacube/go-microservice-banking/internal/api/dto"
-	"github.com/codacube/go-microservice-banking/internal/errs"
 )
 
 // Business Side Layer - Domain Layer

@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
+	"github.com/codacube/banking-lib/logger"
 	"github.com/codacube/go-microservice-banking/internal/api/app"
-	"github.com/codacube/go-microservice-banking/internal/logger"
 	"github.com/joho/godotenv"
 )
 

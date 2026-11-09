@@ -3,10 +3,10 @@ package service
 import (
 	"testing"
 
+	"github.com/codacube/banking-lib/errs"
 	realdomain "github.com/codacube/go-microservice-banking/internal/api/domain"
 	"github.com/codacube/go-microservice-banking/internal/api/dto"
 	"github.com/codacube/go-microservice-banking/internal/api/mocks/domain"
-	"github.com/codacube/go-microservice-banking/internal/errs"
 	"go.uber.org/mock/gomock"
 )
 

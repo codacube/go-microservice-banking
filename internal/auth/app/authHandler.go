@@ -5,9 +5,9 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/codacube/banking-lib/logger"
 	"github.com/codacube/go-microservice-banking/internal/auth/dto"
 	"github.com/codacube/go-microservice-banking/internal/auth/service"
-	"github.com/codacube/go-microservice-banking/internal/logger"
 )
 
 type AuthHandler struct {

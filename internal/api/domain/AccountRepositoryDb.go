@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"strconv"
 
-	"github.com/codacube/go-microservice-banking/internal/errs"
-	"github.com/codacube/go-microservice-banking/internal/logger"
+	"github.com/codacube/banking-lib/errs"
+	"github.com/codacube/banking-lib/logger"
 	"github.com/jmoiron/sqlx"
 )
 

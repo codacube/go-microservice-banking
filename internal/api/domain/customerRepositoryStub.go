@@ -1,6 +1,6 @@
 package domain
 
-import "github.com/codacube/go-microservice-banking/internal/errs"
+import "github.com/codacube/banking-lib/errs"
 
 // Adapters
 type CustomerRepositoryStub struct {

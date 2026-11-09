@@ -3,8 +3,8 @@ package domain
 import (
 	"time"
 
+	"github.com/codacube/banking-lib/errs"
 	"github.com/codacube/go-microservice-banking/internal/api/dto"
-	"github.com/codacube/go-microservice-banking/internal/errs"
 )
 
 type Account struct {

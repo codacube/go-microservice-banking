@@ -7,9 +7,9 @@ import (
 	"os"
 	"time"
 
+	"github.com/codacube/banking-lib/logger"
 	"github.com/codacube/go-microservice-banking/internal/api/domain"
 	"github.com/codacube/go-microservice-banking/internal/api/service"
-	"github.com/codacube/go-microservice-banking/internal/logger"
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 )

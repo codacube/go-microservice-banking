@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/codacube/go-microservice-banking/internal/logger"
+	"github.com/codacube/banking-lib/logger"
 )
 
 type AuthRepository interface {

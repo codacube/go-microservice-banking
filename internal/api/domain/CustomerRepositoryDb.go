@@ -3,8 +3,8 @@ package domain
 import (
 	"database/sql"
 
-	"github.com/codacube/go-microservice-banking/internal/errs"
-	"github.com/codacube/go-microservice-banking/internal/logger"
+	"github.com/codacube/banking-lib/errs"
+	"github.com/codacube/banking-lib/logger"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 )

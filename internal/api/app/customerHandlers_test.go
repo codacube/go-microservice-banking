@@ -7,10 +7,10 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/codacube/banking-lib/errs"
 	"github.com/codacube/go-microservice-banking/internal/api/domain"
 	"github.com/codacube/go-microservice-banking/internal/api/dto"
 	"github.com/codacube/go-microservice-banking/internal/api/mocks/service"
-	"github.com/codacube/go-microservice-banking/internal/errs"
 	"github.com/gorilla/mux"
 	"go.uber.org/mock/gomock"
 )

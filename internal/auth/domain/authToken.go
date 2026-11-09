@@ -1,8 +1,8 @@
 package domain
 
 import (
-	"github.com/codacube/go-microservice-banking/internal/errs"
-	"github.com/codacube/go-microservice-banking/internal/logger"
+	"github.com/codacube/banking-lib/errs"
+	"github.com/codacube/banking-lib/logger"
 	"github.com/dgrijalva/jwt-go"
 )
 

@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/codacube/banking-lib/errs"
 	"github.com/codacube/go-microservice-banking/internal/api/domain"
-	"github.com/codacube/go-microservice-banking/internal/errs"
 	"github.com/gorilla/mux"
 )
 

@@ -3,7 +3,7 @@ package dto
 import (
 	"strings"
 
-	"github.com/codacube/go-microservice-banking/internal/errs"
+	"github.com/codacube/banking-lib/errs"
 )
 
 const WITHDRAWAL = "withdrawal"
