@@ -4,9 +4,9 @@ import (
 	"testing"
 
 	"github.com/codacube/banking-lib/errs"
-	realdomain "github.com/codacube/go-microservice-banking/internal/api/domain"
-	"github.com/codacube/go-microservice-banking/internal/api/dto"
-	"github.com/codacube/go-microservice-banking/internal/api/mocks/domain"
+	realdomain "github.com/codacube/go-microservice-banking/domain"
+	"github.com/codacube/go-microservice-banking/dto"
+	"github.com/codacube/go-microservice-banking/mocks/domain"
 	"go.uber.org/mock/gomock"
 )
 

@@ -1,11 +1,3 @@
-# To Build / Run
-
-```go
-go build -o bin/api ./cmd/api
-
-go run ./cmd/api
-```
-
 ## Summary of the internal/api packages
 
 - app: this is the HTTP/bootstrap layer. It creates the router, loads the DB client, wires repositories into handlers, and exposes the API endpoints. See `app.go`.

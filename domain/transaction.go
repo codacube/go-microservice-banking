@@ -1,7 +1,7 @@
 package domain
 
 import (
-	"github.com/codacube/go-microservice-banking/internal/api/dto"
+	"github.com/codacube/go-microservice-banking/dto"
 )
 
 const WITHDRAWAL = "withdrawal"

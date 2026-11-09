@@ -8,9 +8,9 @@ import (
 	"testing"
 
 	"github.com/codacube/banking-lib/errs"
-	"github.com/codacube/go-microservice-banking/internal/api/domain"
-	"github.com/codacube/go-microservice-banking/internal/api/dto"
-	"github.com/codacube/go-microservice-banking/internal/api/mocks/service"
+	"github.com/codacube/go-microservice-banking/domain"
+	"github.com/codacube/go-microservice-banking/dto"
+	"github.com/codacube/go-microservice-banking/mocks/service"
 	"github.com/gorilla/mux"
 	"go.uber.org/mock/gomock"
 )

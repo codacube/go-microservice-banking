@@ -3,7 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/codacube/go-microservice-banking/internal/auth/app"
+	"github.com/codacube/banking-lib/logger"
+	"github.com/codacube/go-microservice-banking/app"
 	"github.com/joho/godotenv"
 )
 
@@ -14,5 +15,6 @@ func main() {
 		log.Println("No .env file found, relying on system environment variables")
 	}
 
+	logger.Info("Starting the application...")
 	app.Start()
 }

@@ -16,21 +16,11 @@ Simple microservice project that showcases:
 - Unit Testing [Uber/gomock](https://github.com/uber-go/mock)
   - State
   - Route
+- Go Modules
 
 # Important
 
 - This demo uses plaintext passwords. Never use plaintext passwords in a live system, always encrypt them
-
-# Important
-
-- This demo uses plaintext passwords. Never use plaintext passwords in a live system, always encrypt them
-
-# Architecture / Structure
-
-For simplicity I've put the two servers into their own folders. They both share the **/errs** and **/logger** packages. In a larger project these should be their repos (ie. banking api, auth api, library)
-
-- **api/** see [README.md](/internal/api/README.md)
-- **auth/** see [README.md](/internal/auth/README.md)
 
 ## For testing
 

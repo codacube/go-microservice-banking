@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/codacube/go-microservice-banking/internal/api/dto"
-	"github.com/codacube/go-microservice-banking/internal/api/service"
+	"github.com/codacube/go-microservice-banking/dto"
+	"github.com/codacube/go-microservice-banking/service"
 	"github.com/gorilla/mux"
 )
 

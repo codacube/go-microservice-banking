@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/codacube/banking-lib/errs"
-	"github.com/codacube/go-microservice-banking/internal/api/domain"
-	"github.com/codacube/go-microservice-banking/internal/api/service"
+	"github.com/codacube/go-microservice-banking/domain"
+	"github.com/codacube/go-microservice-banking/service"
 	"github.com/gorilla/mux"
 )
 

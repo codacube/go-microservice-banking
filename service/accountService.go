@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"github.com/codacube/banking-lib/errs"
-	"github.com/codacube/go-microservice-banking/internal/api/domain"
-	"github.com/codacube/go-microservice-banking/internal/api/dto"
+	"github.com/codacube/go-microservice-banking/domain"
+	"github.com/codacube/go-microservice-banking/dto"
 )
 
 type AccountService interface {

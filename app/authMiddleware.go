@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/codacube/banking-lib/errs"
-	"github.com/codacube/go-microservice-banking/internal/api/domain"
+	"github.com/codacube/go-microservice-banking/domain"
 	"github.com/gorilla/mux"
 )
 

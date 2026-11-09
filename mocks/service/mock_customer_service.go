@@ -13,8 +13,8 @@ import (
 	reflect "reflect"
 
 	errs "github.com/codacube/banking-lib/errs"
-	domain "github.com/codacube/go-microservice-banking/internal/api/domain"
-	dto "github.com/codacube/go-microservice-banking/internal/api/dto"
+	domain "github.com/codacube/go-microservice-banking/domain"
+	dto "github.com/codacube/go-microservice-banking/dto"
 	gomock "go.uber.org/mock/gomock"
 )
 
